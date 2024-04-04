@@ -557,4 +557,34 @@ def recherche_dans_la_base(q: str):
     conn.close()
     return results
 
+def findUserById(userId: int):
+    try:
+        conn = connect()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(f"""SELECT
+            personne.nom,
+            personne.prenom,
+            personne.email,
+            personne.telephone,
+            personne.description_profil,
+            profession.nom as profession,
+            sous_domaine.nom as sous_domaine,
+            domaine.nom as domaine,
+            GROUP_CONCAT(competence.nom) AS competences
+        FROM personne
+        LEFT JOIN profession ON personne.profession_id = profession.id
+        LEFT JOIN sous_domaine ON personne.sous_domaine = sous_domaine.id
+        LEFT JOIN domaine ON sous_domaine.domaine_id = domaine.id
+        LEFT JOIN competence ON personne.sous_domaine = competence.domaine_id
+        LEFT JOIN entreprise ON personne.entreprise = entreprise.id
+        WHERE personne.id = {userId}
+        GROUP BY personne.id""")
+        results = cursor.fetchone()
+        conn.close()
+        return results
+    except Exception as e:
+        print(f"Error in findUserById: {e}")
+        return None
+
+
 

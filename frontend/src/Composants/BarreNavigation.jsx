@@ -4,6 +4,7 @@ import {
     Typography,
     Button, IconButton, Collapse,
 } from "@material-tailwind/react";
+import {Link} from "react-router-dom";
 
 export function BarreNavigation() {
     // State pour gérer l'ouverture/fermeture de la navigation sur mobile
@@ -22,13 +23,12 @@ export function BarreNavigation() {
         <Navbar className="mx-auto shadow-none w-full p-0 py-4">
             <div className="mx-auto flex items-center justify-between">
                 {/* Logo ou nom de votre site */}
-                <Typography
-                    as="a"
-                    href="#"
+                <Link
+                    href="/"
                     className="mr-4 cursor-pointer py-1.5 font-bold text-xl text-bleuFonce"
                 >
                     ProMEET
-                </Typography>
+                </Link>
                 <div className="flex items-center gap-x-4">
                     <Button
                         size="sm"
@@ -36,12 +36,9 @@ export function BarreNavigation() {
                         <span className="text-white">Recherche</span>
                     </Button>
                     {/* Bouton pour se connecter */}
-                    <Button
-                        size="sm"
-                        className=" bg-bleuFonce hidden lg:inline-block"
-                    >
-                        <span className="text-white">Login</span>
-                    </Button>
+                    <Link to={"/login"} className="bg-bleuFonce text-white py-1 px-4 rounded hidden lg:inline-block">
+                            Login
+                    </Link>
                 </div>
                 <IconButton
                     variant="text"
@@ -88,9 +85,9 @@ export function BarreNavigation() {
                             <span>Recherche</span>
                         </Button>
                         {/* Bouton pour se connecter */}
-                        <Button fullWidth variant="filled" size="sm" className="bg-bleuFonce text-white">
-                            <span>Login</span>
-                        </Button>
+                        <Link to={"/login"} className="bg-bleuFonce text-white py-1 px-4 rounded">
+                            Login
+                        </Link>
                     </div>
                 </div>
             </Collapse>
