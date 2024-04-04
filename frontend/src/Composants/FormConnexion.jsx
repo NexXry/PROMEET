@@ -1,11 +1,17 @@
-import React, {useRef, useState} from "react";
+import  {useRef, useState} from "react";
 import {Button, Input} from "@material-tailwind/react";
+import axios from "axios";
+import {Bounce, toast} from "react-toastify";
+import {authStore} from "../store/authStore.js";
+import { useNavigate  } from "react-router-dom";
 
 export function FormConnexion() {
+    const {authenticate} = authStore();
     const [showInscription, setShowInscription] = useState(false);
     const [error, setError] = useState(false);
     const password = useRef();
     const confirmPassword = useRef();
+    const navigate = useNavigate();
 
     const toggleInscription = () => {
         setShowInscription(!showInscription);
@@ -14,16 +20,98 @@ export function FormConnexion() {
     const handleInscription = (e) => {
         e.preventDefault();
         let data = new FormData(e.target)
-        if (data.get('password') !== data.get('confirmPassword')) {
+        if (data.get('mdp') !== data.get('confirmPassword')) {
             setError(true)
         } else {
             setError(false)
+
+            if (data.get('nom') !== '' && data.get('prenom') !== '' && data.get('email') !== '' && data.get('telephone') !== '' && data.get('mdp') !== '') {
+                const newUser = {
+                    nom: data.get('nom'),
+                    prenom: data.get('prenom'),
+                    email: data.get('email'),
+                    telephone: data.get('telephone'),
+                    mdp: data.get('mdp')
+                }
+
+                axios.post('http://localhost:8000/create-users', newUser).then(response => {
+                    if (response.status === 200) {
+                        toast('Compte créer avec succèss !', {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "light",
+                            transition: Bounce,
+                        });
+                        toggleInscription()
+                    }
+                }).catch(() => {
+                    toast('Oups... une erreur est survenu !', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Bounce,
+                    });
+                })
+            }
+        }
+    }
+
+    const handleConnexion = (e) => {
+        e.preventDefault();
+        let data = new FormData(e.target)
+        if (data.get('email') !== '' && data.get('password') !== '') {
+            const user = {
+                username: data.get('email'),
+                password: data.get('password')
+            }
+
+            axios.post('http://localhost:8000/auth', user).then(response => {
+                if (response.status === 200) {
+                    toast('Connexion réussi !', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Bounce,
+                    });
+                    authenticate(response.data.access_token)
+                    setTimeout(() => {
+                        navigate('/')
+                    },500)
+                }
+            }).catch(() => {
+                toast('Oups... une erreur est survenu !', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
+            })
         }
     }
 
     const InscriptionForm = () => {
         return (
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto my-32 md:my-52 lg:my-60 lg:py-0">
+            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto my-32 md:my-36 lg:my-60 lg:py-0">
                 <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-8 space-y-4 md:space-y-6 sm:p-8 bg-nuanceBlanc">
                         <form className="space-y-6 md:space-y-10" onSubmit={handleInscription}>
@@ -59,9 +147,17 @@ export function FormConnexion() {
                             </div>
                             <div>
                                 <Input
+                                    type="text"
+                                    name="telephone"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    label="Téléphone"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <Input
                                     type="password"
-                                    name="password"
-                                    id="password"
+                                    name="mdp"
                                     inputRef={password}
                                     error={error}
                                     label="Mot de passe"
@@ -73,7 +169,6 @@ export function FormConnexion() {
                                 <Input
                                     type="password"
                                     name="confirmPassword"
-                                    id="confirmPassword"
                                     inputRef={confirmPassword}
                                     error={error}
                                     label="Confirmer le mot de passe"
@@ -107,13 +202,15 @@ export function FormConnexion() {
     return (
         <div>
             {showInscription ? (
-                <InscriptionForm />
+                <InscriptionForm/>
             ) : (
-                <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto my-32 md:my-52 lg:my-60 lg:py-0">
-                    <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <div
+                    className="flex flex-col items-center justify-center px-6 py-8 mx-auto my-32 md:my-44 lg:my-60 lg:py-0">
+                    <div
+                        className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                         <div className="p-8 space-y-4 md:space-y-6 sm:p-8 bg-nuanceBlanc">
-                            <form className="space-y-6 md:space-y-10" action="#">
-                                <div>
+                            <form className="space-y-6 md:space-y-10" onSubmit={handleConnexion}>
+                            <div>
                                     <Input
                                         type="email"
                                         name="email"

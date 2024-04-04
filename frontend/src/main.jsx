@@ -8,12 +8,16 @@ import {Footer} from "./Composants/Footer.jsx";
 import {Accueil} from "./Pages/Accueil.jsx";
 import {BarreNavigation} from "./Composants/BarreNavigation.jsx";
 import { Connexion } from './Pages/Connexion.jsx';
+import 'react-toastify/dist/ReactToastify.css';
+import {ToastContainer} from "react-toastify";
+import {Deconnexion} from "./Composants/Deconnexion.jsx";
 
 function Layout() {
     return (
         <div className={'w-10/12 md:container mx-auto'}>
             <BarreNavigation></BarreNavigation>
             <Outlet/>
+            <ToastContainer />
             <Footer/>
         </div>
     );
@@ -31,6 +35,10 @@ const router = createBrowserRouter([
             {
                 path: '/login',
                 element: <Connexion></Connexion>
+            },
+            {
+                path: '/logout',
+                element: <Deconnexion></Deconnexion>
             },
             {
                 path: '/recherche',

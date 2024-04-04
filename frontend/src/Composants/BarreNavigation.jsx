@@ -1,12 +1,13 @@
 import React from "react";
 import {
     Navbar,
-    Typography,
     Button, IconButton, Collapse,
 } from "@material-tailwind/react";
 import {Link} from "react-router-dom";
+import {authStore} from "../store/authStore.js";
 
 export function BarreNavigation() {
+    const {auth} = authStore();
     // State pour gérer l'ouverture/fermeture de la navigation sur mobile
     const [openNav, setOpenNav] = React.useState(false);
 
@@ -36,9 +37,34 @@ export function BarreNavigation() {
                         <span className="text-white">Recherche</span>
                     </Button>
                     {/* Bouton pour se connecter */}
-                    <Link to={"/login"} className="bg-bleuFonce text-white py-1 px-4 rounded hidden lg:inline-block">
-                            Login
-                    </Link>
+                    {auth.isAuthenticated ?
+                        <div>
+                            <Link to={"/profil/"}>
+                                <Button
+                                    size="sm"
+                                    className=" bg-bleuFonce hidden lg:inline-block mr-4">
+                                    Profil
+                                </Button>
+                            </Link>
+                            <Link to={"/logout"}>
+                                <Button
+                                    size="sm"
+                                    variant={"outlined"}
+                                    className="text-bleuFonce border border-bleuFonce hidden lg:inline-block">
+                                    Déconnexion
+                                </Button>
+                            </Link>
+                        </div>
+                        :
+                        <Link to={"/login"}>
+                            <Button
+                                size="sm"
+                                className=" bg-bleuFonce hidden lg:inline-block">
+                                Login
+                            </Button>
+                        </Link>
+                    }
+
                 </div>
                 <IconButton
                     variant="text"
