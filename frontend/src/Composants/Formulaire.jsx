@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import axios from 'axios';
 import {
     Card,
     Input,
@@ -5,7 +7,34 @@ import {
     Typography, Textarea,
 } from "@material-tailwind/react";
 
+
 export function Formulaire() {
+    const [formData, setFormData] = useState({
+        lastname: '',
+        firstname: '',
+        email: '',
+        phoneNumber: '',
+        message: ''
+    });
+
+    //mettre à jour l'état des données 
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        try {
+            const response = await axios.post('http://localhost:8000/send_email', 
+             formData
+            );
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error('Erreur lors de la soumission du formulaire:', error);
+        }
+    };  
     return (
         <div className="mx-auto w-full mt-10">
             <Card shadow={false}>
@@ -14,7 +43,7 @@ export function Formulaire() {
                 </Typography>
                 <div
                     className="border border-bleuFonce p-4 rounded-xl bg-nuanceBlanc">
-                    <form className="mt-8">
+                    <form className="mt-8" onSubmit={handleSubmit}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <Typography variant="h6" className="text-bleuFonce mb-3">Nom</Typography>
@@ -57,8 +86,9 @@ export function Formulaire() {
                             />
                         </div>
                         <Button
+                            type="submit"
                             size="sm"
-                            className="float-right bg-bleuFonce hidden lg:inline-block"
+                            className="float-right bg-bleuFonce inline-block"
                         >
                             Envoyer
                         </Button>

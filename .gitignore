@@ -2,3 +2,5 @@
 /backend/src/__pycache__/
 /backend/src/model/__pycache__/
 __pycache__/
+/backend/misc.yml
+/backend/backend.iml

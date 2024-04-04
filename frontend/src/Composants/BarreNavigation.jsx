@@ -36,12 +36,9 @@ export function BarreNavigation() {
                         <span className="text-white">Recherche</span>
                     </Button>
                     {/* Bouton pour se connecter */}
-                    <Button
-                        size="sm"
-                        className=" bg-bleuFonce hidden lg:inline-block"
-                    >
-                        <span className="text-white">Login</span>
-                    </Button>
+                    <Link to={"/login"} className="bg-bleuFonce text-white py-1 px-4 rounded hidden lg:inline-block">
+                            Login
+                    </Link>
                 </div>
                 <IconButton
                     variant="text"
@@ -88,9 +85,9 @@ export function BarreNavigation() {
                             <span>Recherche</span>
                         </Button>
                         {/* Bouton pour se connecter */}
-                        <Button fullWidth variant="filled" size="sm" className="bg-bleuFonce text-white">
-                            <span>Login</span>
-                        </Button>
+                        <Link to={"/login"} className="bg-bleuFonce text-white py-1 px-4 rounded">
+                            Login
+                        </Link>
                     </div>
                 </div>
             </Collapse>

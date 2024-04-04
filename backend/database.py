@@ -1,6 +1,8 @@
 import mysql.connector
 from dotenv import load_dotenv
 import os
+from src.model import User
+from src.utils import get_hashed_password
 
 load_dotenv()
 
@@ -9,6 +11,7 @@ MYSQL_USER = os.getenv("MYSQL_USER")
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 MYSQL_DB = os.getenv("MYSQL_DB")
 
+
 def connect():
     return mysql.connector.connect(
         host=MYSQL_HOST,
@@ -16,6 +19,7 @@ def connect():
         password=MYSQL_PASSWORD,
         database=MYSQL_DB
     )
+
 
 def initialize_db_profession():
     conn = connect()
@@ -26,8 +30,9 @@ def initialize_db_profession():
            nom VARCHAR(255)
        );
     """
-    cursor.execute(query,multi=True)
+    cursor.execute(query, multi=True)
     conn.close()
+
 
 def initialize_db_domaine():
     conn = connect()
@@ -40,6 +45,7 @@ def initialize_db_domaine():
     """
     cursor.execute(query)
     conn.close()
+
 
 def initialize_db_sous_domaine():
     conn = connect()
@@ -55,6 +61,7 @@ def initialize_db_sous_domaine():
     cursor.execute(query)
     conn.close()
 
+
 def initialize_db_competence():
     conn = connect()
     cursor = conn.cursor()
@@ -68,6 +75,7 @@ def initialize_db_competence():
     """
     cursor.execute(query)
     conn.close()
+
 
 def initialize_db_entreprise():
     conn = connect()
@@ -83,6 +91,7 @@ def initialize_db_entreprise():
     cursor.execute(query)
     conn.close()
 
+
 def initialize_db_personne():
     conn = connect()
     cursor = conn.cursor()
@@ -91,20 +100,23 @@ def initialize_db_personne():
         id INT AUTO_INCREMENT PRIMARY KEY,
         nom VARCHAR(255),
         prenom VARCHAR(255),
-        email VARCHAR(255),
+        email VARCHAR(100) ,
         mdp VARCHAR(255),
         telephone VARCHAR(255),
-        description_profil VARCHAR(255),
-        profession_id INT,
-        sous_domaine INT,
-        entreprise INT,
+        role VARCHAR(50) default 'user',
+        description_profil VARCHAR(255) null ,
+        profession_id INT null,
+        sous_domaine INT null,
+        entreprise INT null,
         FOREIGN KEY (profession_id) REFERENCES profession(id),
         FOREIGN KEY (sous_domaine) REFERENCES sous_domaine(id),
-        FOREIGN KEY (entreprise) REFERENCES entreprise(id)
+        FOREIGN KEY (entreprise) REFERENCES entreprise(id),
+         UNIQUE KEY unique_email (email)
     );
     """
     cursor.execute(query)
     conn.close()
+
 
 def initialize_value_domaine():
     conn = connect()
@@ -183,11 +195,12 @@ def initialize_value_domaine():
       ) LIMIT 1;
 
     """
-    generator = cursor.execute(query,multi=True)
+    generator = cursor.execute(query, multi=True)
     for query in generator:
         if query.with_rows:
             query.fetchall()
     conn.close()
+
 
 def initialize_value_sous_domaine():
     conn = connect()
@@ -307,11 +320,12 @@ def initialize_value_sous_domaine():
          SELECT nom FROM sous_domaine WHERE nom = 'Electronique' AND domaine_id = 12
       ) LIMIT 1;
     """
-    generator = cursor.execute(query,multi=True)
+    generator = cursor.execute(query, multi=True)
     for query in generator:
         if query.with_rows:
             query.fetchall()
     conn.close()
+
 
 def initialize_value_competence():
     conn = connect()
@@ -348,11 +362,12 @@ def initialize_value_competence():
        ) LIMIT 1;
 
     """
-    generator = cursor.execute(query,multi=True)
+    generator = cursor.execute(query, multi=True)
     for query in generator:
         if query.with_rows:
             query.fetchall()
     conn.close()
+
 
 def initialize_value_entreprise():
     conn = connect()
@@ -394,11 +409,12 @@ def initialize_value_entreprise():
           SELECT nom FROM entreprise WHERE nom = 'ATOS'
       ) LIMIT 1;
     """
-    generator = cursor.execute(query,multi=True)
+    generator = cursor.execute(query, multi=True)
     for query in generator:
         if query.with_rows:
             query.fetchall()
     conn.close()
+
 
 def initialize_value_profession():
     conn = connect()
@@ -452,11 +468,12 @@ def initialize_value_profession():
             SELECT nom FROM profession WHERE nom = 'Fonctionnaire'
         ) LIMIT 1;
     """
-    generator = cursor.execute(query,multi=True)
+    generator = cursor.execute(query, multi=True)
     for query in generator:
         if query.with_rows:
             query.fetchall()
     conn.close()
+
 
 def initialize_value_personne():
     conn = connect()
@@ -502,6 +519,7 @@ def initialize_value_personne():
 
     conn.close()
 
+
 def initialize_db():
     initialize_db_domaine()
     initialize_db_sous_domaine()
@@ -515,6 +533,7 @@ def initialize_db():
     initialize_value_entreprise()
     initialize_value_profession()
     initialize_value_personne()
+
 
 def recherche_dans_la_base(q: str):
     conn = connect()
@@ -552,10 +571,12 @@ def recherche_dans_la_base(q: str):
     GROUP BY personne.id
     """
     search_string = '%' + q + '%'
-    cursor.execute(query, (search_string, search_string, search_string, search_string, search_string, search_string, search_string))
+    cursor.execute(query, (
+        search_string, search_string, search_string, search_string, search_string, search_string, search_string))
     results = cursor.fetchall()
     conn.close()
     return results
+
 
 def findUserById(userId: int):
     try:
@@ -587,4 +608,36 @@ def findUserById(userId: int):
         return None
 
 
+def findUserByEmail(email: str):
+    try:
+        conn = connect()
+        cursor = conn.cursor(dictionary=True)
+        # Use parameterized query to prevent SQL injection
+        cursor.execute("""SELECT
+            personne.email,
+            personne.role,
+            personne.mdp
+        FROM personne
+        WHERE personne.email = %s""", (email,))
+        results = cursor.fetchone()
+        conn.close()
+        return results
+    except Exception as e:
+        print(f"Error in findUserByEmail: {e}")
+        return None
 
+
+def createUser(user: User):
+    try:
+        conn = connect()
+        cursor = conn.cursor()
+        password = get_hashed_password(user.mdp)
+        cursor.execute(f"""INSERT INTO personne (nom, prenom, email, mdp, telephone)
+        VALUES (%s, %s, %s, %s, %s)""",
+                       (user.nom, user.prenom, user.email, password, user.telephone))
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"Error in createUser: {e}")
+        return False
