@@ -7,6 +7,7 @@ import {Outlet} from "react-router-dom";
 import {Footer} from "./Composants/Footer.jsx";
 import {Accueil} from "./Pages/Accueil.jsx";
 import {BarreNavigation} from "./Composants/BarreNavigation.jsx";
+import {BackOffice} from "./Pages/BackOffice.jsx"
 
 function Layout() {
     return (
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
             {
                 path: '/recherche',
                 element: <div></div>
+            },
+            {
+                path: '/backoffice',
+                element: <BackOffice/>
             }
         ]
     }
