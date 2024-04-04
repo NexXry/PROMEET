@@ -22,16 +22,10 @@ export function Recherche(){
 
             <div class="flex flex-wrap justify-center">
                     
-                {profiles.map((item, index) => (
+                {profiles == null? "":profiles.map((item, index) => (
                     <CardProfile key={index} data={item} /> // Rendering a child component for each item in data
                 ))}
-
-                {/* {[...Array(6)].map((_, index) => (
-                    // For profil in profiles
-                    <CardProfile></CardProfile>
-                ))} */}
                     
-
             </div>
 
         </div>
