@@ -13,21 +13,17 @@ export const ProfilListe = ({ profils }) => {
     };
 
     return (
-        <div className="container mx-auto">
-            <h1 className="text-3xl font-bold my-4">Liste des Profils</h1>
+        <div className="border border-bleuFonce p-4 rounded-xl bg-nuanceBlanc">
+            <button className="ml-8 bg-bleuFonce text-white px-4 py-2 rounded">Chercher</button>
             <div className="grid grid-cols-3 gap-4">
-                {profils.map((profil) => (
-                    <div key={profil.id} className="bg-gray-200 rounded p-4 flex flex-col justify-between">
-                        <div>
-                            <h2 className="text-lg font-semibold">{profil.name}</h2>
-                            <p className="text-gray-600">{profil.job}</p>
-                        </div>
-                        <div className="mt-4 flex justify-between">
-                            <button onClick={() => handleProfileView(profil)} className="bg-blue-500 text-white px-3 py-1 rounded">Voir Profil</button>
-                            <button onClick={() => handleDeleteProfile(profil.id)} className="bg-red-500 text-white px-3 py-1 rounded">Supprimer</button>
+               
+                    <div className="flex justify-center mt-2 flex-wrap 2xl:flex-nowrap gap-3">
+                    <button className="text-white bg-bleuFonce rounded-lg px-4 py-2 mx-1 w-44 2xl:w-full break-words">Michael_durand:Analyste</button>
+                        <div className="flex items-center gap-x-4 mt-4 flex justify-between">
+                            <button className="bg-bleuFonce text-white px-3 py-1 rounded"> Voir_Profil </button> 
+                            <button className="bg-bleuFonce text-white px-3 py-1 rounded">Supprimer</button>
                         </div>
                     </div>
-                ))}
             </div>
             {selectedProfile && (
                 <div className="mt-8 bg-gray-200 p-4 rounded">
