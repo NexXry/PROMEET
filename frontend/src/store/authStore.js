@@ -1,9 +1,9 @@
-import { create } from 'zustand'
+import {create} from 'zustand'
 import {persist} from "zustand/middleware";
 
-export const authStore =  create(
+export const authStore = create(
     persist(
-        (set, get) => ({
+        (set) => ({
             auth: {
                 isAuthenticated: false,
                 user: {
@@ -13,8 +13,15 @@ export const authStore =  create(
                 },
                 token: null,
             },
-            authenticate: (token) => set({ auth: { isAuthenticated: true }, token: token }),
-            logout: () => set({ auth: { isAuthenticated: false, user: null }, token: null }),
+            authenticate: (newUser, token) => set((state) => ({
+                auth: {
+                    ...state.auth,
+                    isAuthenticated: true,
+                    user: newUser,
+                    token: token
+                }
+            })),
+            logout: () => set({auth: {isAuthenticated: false, user: null, token: null}}),
         }),
         {
             name: 'user-storage',

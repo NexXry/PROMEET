@@ -4,6 +4,7 @@ import axios from "axios";
 import {Bounce, toast} from "react-toastify";
 import {authStore} from "../store/authStore.js";
 import { useNavigate  } from "react-router-dom";
+import {jwtDecode} from "jwt-decode";
 
 export function FormConnexion() {
     const {authenticate} = authStore();
@@ -88,7 +89,13 @@ export function FormConnexion() {
                         theme: "light",
                         transition: Bounce,
                     });
-                    authenticate(response.data.access_token)
+                    const extractedToken = jwtDecode(response.data.access_token)
+                    let user = {
+                        id: extractedToken.sub.split(',')[0],
+                        email: extractedToken.sub.split(',')[1],
+                        role: extractedToken.sub.split(',')[2]
+                    }
+                    authenticate(user,response.data.access_token)
                     setTimeout(() => {
                         navigate('/')
                     },500)

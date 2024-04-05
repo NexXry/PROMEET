@@ -11,6 +11,9 @@ import { Connexion } from './Pages/Connexion.jsx';
 import 'react-toastify/dist/ReactToastify.css';
 import {ToastContainer} from "react-toastify";
 import {Deconnexion} from "./Composants/Deconnexion.jsx";
+import { Profil } from './Pages/Profil.jsx';
+
+
 
 function Layout() {
     return (
@@ -42,7 +45,11 @@ const router = createBrowserRouter([
             },
             {
                 path: '/recherche',
-                element: <div></div>
+                element:  <Recherche></Recherche>
+            },
+            {
+                path: '/profil/:id',
+                element: <Profil />
             }
         ]
     }

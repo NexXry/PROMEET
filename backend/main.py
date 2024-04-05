@@ -2,10 +2,11 @@ from fastapi import HTTPException, Depends
 from pydantic import BaseModel, EmailStr
 from fastapi import FastAPI
 from starlette import status
-from database import connect, initialize_db, recherche_dans_la_base, findUserById, findUserByEmail, createUser
+from database import connect, initialize_db, recherche_dans_la_base, findUserById, findUserByEmail, createUser, \
+    updateUserById, findAllDomaines, findAllSousDomaines, findAllCompetences, findAllProfessions, findAllEntreprises
 from src.auth_bearer import JWTBearer
 from src.model.Token import TokenSchema, auth, TokenData
-from src.model.User import User
+from src.model.User import User, UpdateUser
 from fastapi.middleware.cors import CORSMiddleware
 from src.utils import (
     get_hashed_password,
@@ -53,9 +54,26 @@ async def send_email(formulaire: Formulaire):
     message = formulaire.message
     return {"message": "Données du formulaire traitées avec succès"}
 
-@app.get("/users/{userId}")
+
+@app.get("/users/{userId}", response_model=User)
 async def create_user(userId: int):
     user = findUserById(userId)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+
+@app.put('/update-users/{userId}', response_model=UpdateUser)
+async def update_user(userId: int, user: UpdateUser, token: TokenData = Depends(JWTBearer())):
+    extracted_token = deserialize_token(token)
+
+    id = extracted_token['sub'].split(',')[0]
+    if str(id) != str(userId):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You are not authorized to perform this action"
+        )
+    user = updateUserById(userId, user)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
@@ -72,7 +90,7 @@ async def create(user: User):
 @app.post('/auth', response_model=TokenSchema)
 async def login(form_data: auth):
     user = findUserByEmail(form_data.username)
-    print(user)
+
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -87,8 +105,32 @@ async def login(form_data: auth):
         )
 
     return {
-        "access_token": create_access_token(user['email'] + "," + user['role']),
-        "refresh_token": create_refresh_token(user['email']),
+        "access_token": create_access_token(str(user['id']) + "," + user['email'] + "," + user['role']),
+        "refresh_token": create_refresh_token(user['id']),
     }
-    return  user
+    return user
 
+
+@app.get('/domaines')
+async def get_domaines():
+    return findAllDomaines()
+
+
+@app.get('/sous_domaines')
+async def get_sous_domaines():
+    return findAllSousDomaines()
+
+
+@app.get('/competences')
+async def get_competences():
+    return findAllCompetences()
+
+
+@app.get('/professions')
+async def get_professions():
+    return findAllProfessions()
+
+
+@app.get('/entreprises')
+async def get_entreprises():
+    return findAllEntreprises()
