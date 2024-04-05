@@ -592,6 +592,7 @@ def findUserById(userId: int):
             profession.nom as profession,
             sous_domaine.nom as sous_domaine,
             domaine.nom as domaine,
+            entreprise.nom as entreprise,
             GROUP_CONCAT(competence.nom) AS competences
         FROM personne
         LEFT JOIN profession ON personne.profession_id = profession.id
