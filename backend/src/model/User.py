@@ -17,9 +17,9 @@ class UpdateUser(BaseModel):
     prenom: str
     email: str
     telephone: str
-    description: str
-    competences: List[str]
-    profession: str
-    sous_domaine: str
-    domaine: str
-    entreprise: str
+    description: str | None
+    competences: List[int] | List[str] | None
+    profession: int | str | None
+    sous_domaine: int | str | None
+    domaine: int | str | None
+    entreprise: int | str | None

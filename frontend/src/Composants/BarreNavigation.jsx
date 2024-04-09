@@ -36,13 +36,13 @@ export function BarreNavigation() {
                             size="sm"
                             className=" bg-bleuFonce hidden lg:inline-block">
                             <span className="text-white">Recherche</span>
-                            
+
                         </Button>
                     </Link>
                     {/* Bouton pour se connecter */}
                     {auth.isAuthenticated ?
                         <div>
-                            <Link to={"/profil/"}>
+                            <Link to={"/profil/" + auth?.user?.id}>
                                 <Button
                                     size="sm"
                                     className=" bg-bleuFonce hidden lg:inline-block mr-4">
@@ -115,7 +115,7 @@ export function BarreNavigation() {
                         </Button>
                         {auth.isAuthenticated ?
                             <div className={"w-full"}>
-                                <Link to={"/profil/"}>
+                                <Link to={"/profil/" + auth?.user?.id}>
                                     <Button
                                         size="sm"
                                         className=" bg-bleuFonce  mr-4 w-full">
