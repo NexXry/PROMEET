@@ -1,37 +1,18 @@
-import React, { useState } from 'react';
+import {Typography} from "@material-tailwind/react";
+import {UtilisateurList} from "./UtilisateurList.jsx";
 
-export const ProfilListe = ({ profils }) => {
-    const [selectedProfile, setSelectedProfile] = useState(null);
-
-    const handleProfileView = (profile) => {
-        setSelectedProfile(profile);
-    };
-
-    const handleDeleteProfile = (profileId) => {
-        // Logique pour supprimer le profil avec l'ID profileId
-        console.log(`Profil avec l'ID ${profileId} supprimé`);
-    };
+export const ProfilListe = () => {
 
     return (
-        <div className="border border-bleuFonce p-4 rounded-xl bg-nuanceBlanc">
-            <button className="ml-8 bg-bleuFonce text-white px-4 py-2 rounded">Chercher</button>
-            <div className="grid grid-cols-3 gap-4">
-               
-                    <div className="flex justify-center mt-2 flex-wrap 2xl:flex-nowrap gap-3">
-                    <button className="text-white bg-bleuFonce rounded-lg px-4 py-2 mx-1 w-44 2xl:w-full break-words">Michael_durand:Analyste</button>
-                        <div className="flex items-center gap-x-4 mt-4 flex justify-between">
-                            <button className="bg-bleuFonce text-white px-3 py-1 rounded"> Voir_Profil </button> 
-                            <button className="bg-bleuFonce text-white px-3 py-1 rounded">Supprimer</button>
-                        </div>
-                    </div>
+        <div>
+            <Typography variant={"h1"} className="font-bold text-xl text-bleuFonce text-center mb-6">
+                Gestion des utilisateurs
+            </Typography>
+            <div className={'h-screen w-full overflow-y-scroll flex flex-col gap-2'}>
+                <UtilisateurList id={1} nom={"Castex"} prenom={"Nicolas"} profession={"développeur web"}/>
+                <UtilisateurList id={1} nom={"Castex"} prenom={"Nicolas"} profession={"développeur web"}/>
+                <UtilisateurList id={1} nom={"Castex"} prenom={"Nicolas"} profession={"développeur web"}/>
             </div>
-            {selectedProfile && (
-                <div className="mt-8 bg-gray-200 p-4 rounded">
-                    <h2 className="text-xl font-semibold">Profil Intégral de {selectedProfile.name}</h2>
-                    <p className="text-gray-600">Métier: {selectedProfile.job}</p>
-                    {/* Autres informations du profil */}
-                </div>
-            )}
         </div>
     );
 }
