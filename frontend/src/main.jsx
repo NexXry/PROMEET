@@ -13,7 +13,8 @@ import {ToastContainer} from "react-toastify";
 import {Deconnexion} from "./Composants/Deconnexion.jsx";
 import {Profil} from './Pages/Profil.jsx';
 import {Recherche} from "./Pages/Recherche.jsx";
-import {BackOffice} from "./Pages/BackOffice.jsx"
+import {BackOffice} from "./Pages/BackOffice.jsx";
+import { BackOffice_RdvListe } from './Pages/BackOffice_RdvListe.jsx'
 
 function Layout() {
     return (
@@ -53,7 +54,12 @@ const router = createBrowserRouter([
             {
                 path: '/backoffice',
                 element: <BackOffice/>
+            },
+            {
+                path: '/BackOffice_RdvListe',
+                element: <BackOffice_RdvListe />
             }
+
         ]
     }
 ])
