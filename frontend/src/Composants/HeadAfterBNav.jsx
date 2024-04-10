@@ -1,4 +1,5 @@
 import {Button} from '@material-tailwind/react';
+import {Link} from "react-router-dom";
 
 export function HeadAfterBNav() {
     return (
@@ -27,12 +28,14 @@ export function HeadAfterBNav() {
                                 jkdhjdhjhdjhfdjkfhsdkjfhskdfhskdjdjfhksdfhsjdfhksdfhksdfhsdkfhsdkfhskfhskdjf
                             </p>
                         </div>
-                        <Button
-                            className="w-40  text-bleuFonce hover:text-white border border-bleuFonce bg-transparent relative overflow-hidden duration-300 ease-linear after:absolute after:inset-x-0 after:aspect-square after:scale-0 after:opacity-70 after:origin-center after:duration-300 after:ease-linear after:rounded-full after:top-0 after:left-0 after:bg-bleuFonce hover:after:opacity-100 hover:after:scale-[2.5]">
+                        <Link to={'/recherche'}>
+                            <Button
+                                className="w-40  text-bleuFonce hover:text-white border border-bleuFonce bg-transparent relative overflow-hidden duration-300 ease-linear after:absolute after:inset-x-0 after:aspect-square after:scale-0 after:opacity-70 after:origin-center after:duration-300 after:ease-linear after:rounded-full after:top-0 after:left-0 after:bg-bleuFonce hover:after:opacity-100 hover:after:scale-[2.5]">
                                     <span className="flex relative z-[5]">
                                         Trouver un Pro
                                     </span>
-                        </Button>
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </div>
