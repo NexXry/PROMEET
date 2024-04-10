@@ -13,14 +13,13 @@ import {ToastContainer} from "react-toastify";
 import {Deconnexion} from "./Composants/Deconnexion.jsx";
 import {Profil} from './Pages/Profil.jsx';
 import {Recherche} from "./Pages/Recherche.jsx";
-
+import {BackOffice} from "./Pages/BackOffice.jsx"
 
 function Layout() {
     return (
         <div className={'w-10/12 md:container mx-auto'}>
             <BarreNavigation></BarreNavigation>
             <Outlet/>
-            <ToastContainer/>
             <Footer/>
         </div>
     );
@@ -50,6 +49,10 @@ const router = createBrowserRouter([
             {
                 path: '/profil/:id',
                 element: <Profil/>
+            },
+            {
+                path: '/backoffice',
+                element: <BackOffice/>
             }
         ]
     }
