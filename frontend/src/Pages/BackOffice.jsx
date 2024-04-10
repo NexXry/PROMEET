@@ -1,9 +1,9 @@
+import {ProfilListe} from "../Composants/ProfilListe"
 
-import { ProfilListe } from "../Composants/ProfilListe"
 export const BackOffice = () => {
     return (
         <>
-           <ProfilListe></ProfilListe>
+            <ProfilListe></ProfilListe>
         </>
     )
 }
