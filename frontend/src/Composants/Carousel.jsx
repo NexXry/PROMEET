@@ -7,7 +7,7 @@ import {
 
 export function CarouselDefault() {
     return (
-        <div className={"mt-20 mb-20"}>
+        <div className={" mb-24"}>
             <h2 className={'text-bleuFonce text-3xl text-center'}>Retrouvez des professionnels </h2>
             <Carousel id="carous" className="hidden xl:flex relative overflow-hidden rounded-xl"
                       prevArrow={({handlePrev}) => (

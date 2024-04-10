@@ -3,7 +3,7 @@ import {FaInstagram, FaLinkedin} from "react-icons/fa";
 
 export function Footer() {
     return (
-        <footer className="mx-auto flex items-center justify-between py-8 mt-10">
+        <footer className="mx-auto flex items-center justify-between py-8 mt-24">
             <Typography className="font-bold text-xl text-bleuFonce">
                 &copy; 2024 ProMEET
             </Typography>

@@ -1,12 +1,13 @@
 import React from "react";
 import {
     Navbar,
-    Typography,
     Button, IconButton, Collapse,
 } from "@material-tailwind/react";
 import {Link} from "react-router-dom";
+import {authStore} from "../store/authStore.js";
 
 export function BarreNavigation() {
+    const {auth} = authStore();
     // State pour gérer l'ouverture/fermeture de la navigation sur mobile
     const [openNav, setOpenNav] = React.useState(false);
 
@@ -30,15 +31,43 @@ export function BarreNavigation() {
                     ProMEET
                 </Link>
                 <div className="flex items-center gap-x-4">
-                    <Button
-                        size="sm"
-                        className=" bg-bleuFonce hidden lg:inline-block">
-                        <span className="text-white">Recherche</span>
-                    </Button>
-                    {/* Bouton pour se connecter */}
-                    <Link to={"/login"} className="bg-bleuFonce text-white py-1 px-4 rounded hidden lg:inline-block">
-                            Login
+                    <Link to={"/recherche"}>
+                        <Button
+                            size="sm"
+                            className=" bg-bleuFonce hidden lg:inline-block">
+                            <span className="text-white">Recherche</span>
+
+                        </Button>
                     </Link>
+                    {/* Bouton pour se connecter */}
+                    {auth.isAuthenticated ?
+                        <div>
+                            <Link to={"/profil/" + auth?.user?.id}>
+                                <Button
+                                    size="sm"
+                                    className=" bg-bleuFonce hidden lg:inline-block mr-4">
+                                    Profil
+                                </Button>
+                            </Link>
+                            <Link to={"/logout"}>
+                                <Button
+                                    size="sm"
+                                    variant={"outlined"}
+                                    className="text-bleuFonce border border-bleuFonce hidden lg:inline-block">
+                                    Déconnexion
+                                </Button>
+                            </Link>
+                        </div>
+                        :
+                        <Link to={"/login"}>
+                            <Button
+                                size="sm"
+                                className=" bg-bleuFonce hidden lg:inline-block">
+                                Login
+                            </Button>
+                        </Link>
+                    }
+
                 </div>
                 <IconButton
                     variant="text"
@@ -80,14 +109,37 @@ export function BarreNavigation() {
             </div>
             <Collapse open={openNav}>
                 <div className="container mx-auto mt-5">
-                    <div className="flex items-center gap-x-5">
+                    <div className="flex flex-col items-center gap-5 w-full">
                         <Button fullWidth variant="filled" size="sm" className="bg-bleuFonce text-white">
                             <span>Recherche</span>
                         </Button>
-                        {/* Bouton pour se connecter */}
-                        <Link to={"/login"} className="bg-bleuFonce text-white py-1 px-4 rounded">
-                            Login
-                        </Link>
+                        {auth.isAuthenticated ?
+                            <div className={"w-full"}>
+                                <Link to={"/profil/" + auth?.user?.id}>
+                                    <Button
+                                        size="sm"
+                                        className=" bg-bleuFonce  mr-4 w-full">
+                                        Profil
+                                    </Button>
+                                </Link>
+                                <Link to={"/logout"}>
+                                    <Button
+                                        size="sm"
+                                        variant={"outlined"}
+                                        className="text-bleuFonce border border-bleuFonce w-full mt-5">
+                                        Déconnexion
+                                    </Button>
+                                </Link>
+                            </div>
+                            :
+                            <Link to={"/login"} className={"w-full"}>
+                                <Button
+                                    size="sm"
+                                    className="bg-bleuFonce w-full">
+                                    Login
+                                </Button>
+                            </Link>
+                        }
                     </div>
                 </div>
             </Collapse>
