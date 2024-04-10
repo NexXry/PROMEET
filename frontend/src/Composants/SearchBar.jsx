@@ -33,7 +33,7 @@ const SearchBar = ({search, profilesRetrieved}) => {
 
     return (
         <form onSubmit={handleSearch}//appel de la fonction handleSearch
-              className="w-full mx-auto rounded-xl bg-nuanceBlanc border border-bleuFonce py-4 px-2">
+              className="w-full mx-auto rounded-xl bg-nuanceBlanc border border-bleuFonce py-4 px-2 my-24">
             <label htmlFor="default-search"
                    className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
             <div className="relative flex w-full">

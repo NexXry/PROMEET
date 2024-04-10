@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from starlette import status
 from database import connect, initialize_db, retourner_domaines, findUserById, findUserByEmail, createUser, \
     updateUserById, findAllDomaines, findAllSousDomaines, findAllCompetences, findAllProfessions, findAllEntreprises, \
-    recherche_dans_la_base
+    recherche_dans_la_base, delUserById
 from src.auth_bearer import JWTBearer
 from src.model.Token import TokenSchema, auth, TokenData
 from src.model.User import User, UpdateUser
@@ -135,3 +135,19 @@ async def get_allInfo():
         'profession': findAllProfessions(),
         'entreprise': findAllEntreprises()
     }
+
+
+@app.delete('/delete-users/{userId}')
+async def delete_user(userId: int, token: TokenData = Depends(JWTBearer())):
+    extracted_token = deserialize_token(token)
+    role = extracted_token['sub'].split(',')[2]
+    if role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You are not authorized to perform this action"
+        )
+    user = findUserById(userId)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    delUserById(userId)
+    return {"message": "User deleted successfully"}

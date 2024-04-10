@@ -109,6 +109,7 @@ def initialize_db_personne():
         telephone VARCHAR(255),
         description_profil VARCHAR(255),
         profession_id INT,
+        role VARCHAR(255) DEFAULT 'user',
         sous_domaine INT,
         entreprise INT,
         FOREIGN KEY (profession_id) REFERENCES profession(id),
@@ -818,3 +819,12 @@ def findAllEntreprises():
     cursor.execute("SELECT nom FROM entreprise")
     entreprises = cursor.fetchall()
     return entreprises
+
+
+def delUserById(userId: int):
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM personne WHERE id = %s", (userId,))
+    conn.commit()
+    conn.close()
+    return True
