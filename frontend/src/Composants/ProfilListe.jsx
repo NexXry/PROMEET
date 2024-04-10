@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ButtonGroup, Button } from "@material-tailwind/react";
 
 export const ProfilListe = ({ profils }) => {
     const [selectedProfile, setSelectedProfile] = useState(null);
@@ -14,17 +15,13 @@ export const ProfilListe = ({ profils }) => {
 
     return (
         <div className="border border-bleuFonce p-4 rounded-xl bg-nuanceBlanc">
-            <button className="ml-8 bg-bleuFonce text-white px-4 py-2 rounded">Chercher</button>
-            <div className="grid grid-cols-3 gap-4">
-               
-                    <div className="flex justify-center mt-2 flex-wrap 2xl:flex-nowrap gap-3">
-                    <button className="text-white bg-bleuFonce rounded-lg px-4 py-2 mx-1 w-44 2xl:w-full break-words">Michael_durand:Analyste</button>
-                        <div className="flex items-center gap-x-4 mt-4 flex justify-between">
-                            <button className="bg-bleuFonce text-white px-3 py-1 rounded"> Voir_Profil </button> 
-                            <button className="bg-bleuFonce text-white px-3 py-1 rounded">Supprimer</button>
-                        </div>
-                    </div>
-            </div>
+
+            <ButtonGroup size="lg">
+                <Button className="bg-bleuFonce text-white px-4 py-2 rounded-lg mr-10 w-1/3 text-left">Michael_durand:Analyste</Button>
+                <Button className="bg-bleuFonce text-white px-3 py-1 rounded ml-auto">Profil</Button>
+                <Button className="bg-bleuFonce text-white px-3 py-1 rounded ml-6 mr-10">Supprimer</Button>
+            </ButtonGroup>
+
             {selectedProfile && (
                 <div className="mt-8 bg-gray-200 p-4 rounded">
                     <h2 className="text-xl font-semibold">Profil Intégral de {selectedProfile.name}</h2>
