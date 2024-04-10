@@ -1,14 +1,15 @@
 from fastapi import HTTPException, Depends
-from pydantic import BaseModel, EmailStr
 from fastapi import FastAPI
 from starlette import status
-from database import connect, initialize_db, recherche_dans_la_base, findUserById, findUserByEmail, createUser
+from database import connect, initialize_db, retourner_domaines, findUserById, findUserByEmail, createUser, \
+    updateUserById, findAllDomaines, findAllSousDomaines, findAllCompetences, findAllProfessions, findAllEntreprises, \
+    recherche_dans_la_base, delUserById
 from src.auth_bearer import JWTBearer
 from src.model.Token import TokenSchema, auth, TokenData
+from src.model.User import User, UpdateUser
 from src.model.User import User
 from fastapi.middleware.cors import CORSMiddleware
 from src.utils import (
-    get_hashed_password,
     create_access_token,
     create_refresh_token,
     verify_password, deserialize_token
@@ -44,6 +45,12 @@ async def recherche(q: str):
     return {'find': result}
 
 
+@app.get("/domaine")
+async def domaine():
+    result = retourner_domaines()
+    return {'find': result}
+
+
 @app.post("/send_email")
 async def send_email(formulaire: Formulaire):
     lastname = formulaire.lastname
@@ -53,9 +60,36 @@ async def send_email(formulaire: Formulaire):
     message = formulaire.message
     return {"message": "Données du formulaire traitées avec succès"}
 
-@app.get("/users/{userId}")
+
+@app.get("/users/{userId}", response_model=UpdateUser)
 async def create_user(userId: int):
     user = findUserById(userId)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if 'competences' in user:
+        if user['competences'] is None:
+            user['competences'] = []
+        else:
+            user['competences'] = user['competences'].split(',')
+
+    if 'profession' in user and user['profession'] is None:
+        user['profession'] = None
+
+    return user
+
+
+@app.put('/update-users/{userId}', response_model=UpdateUser)
+async def update_user(userId: int, user: UpdateUser, token: TokenData = Depends(JWTBearer())):
+    extracted_token = deserialize_token(token)
+    id = extracted_token['sub'].split(',')[0]
+    if str(id) != str(userId):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You are not authorized to perform this action"
+        )
+    user = updateUserById(userId, user)
+    print(user)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
@@ -72,7 +106,7 @@ async def create(user: User):
 @app.post('/auth', response_model=TokenSchema)
 async def login(form_data: auth):
     user = findUserByEmail(form_data.username)
-    print(user)
+
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -87,8 +121,33 @@ async def login(form_data: auth):
         )
 
     return {
-        "access_token": create_access_token(user['email'] + "," + user['role']),
-        "refresh_token": create_refresh_token(user['email']),
+        "access_token": create_access_token(str(user['id']) + "," + user['email'] + "," + user['role']),
+        "refresh_token": create_refresh_token(user['id']),
     }
-    return  user
+    return user
 
+
+@app.get('/lists')
+async def get_allInfo():
+    return {
+        'sous_domaine': findAllSousDomaines(),
+        'competences': findAllCompetences(),
+        'profession': findAllProfessions(),
+        'entreprise': findAllEntreprises()
+    }
+
+
+@app.delete('/delete-users/{userId}')
+async def delete_user(userId: int, token: TokenData = Depends(JWTBearer())):
+    extracted_token = deserialize_token(token)
+    role = extracted_token['sub'].split(',')[2]
+    if role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You are not authorized to perform this action"
+        )
+    user = findUserById(userId)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    delUserById(userId)
+    return {"message": "User deleted successfully"}
