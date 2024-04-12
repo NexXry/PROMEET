@@ -14,7 +14,8 @@ import {Deconnexion} from "./Composants/Deconnexion.jsx";
 import {Profil} from './Pages/Profil.jsx';
 import {Recherche} from "./Pages/Recherche.jsx";
 import {BackOffice} from "./Pages/BackOffice.jsx";
-import { BackOffice_RdvListe } from './Pages/BackOffice_RdvListe.jsx'
+import { BackOffice_RdvListe } from './Pages/BackOffice_RdvListe.jsx';
+import {BackOffice_Accueil} from  "./Pages/BackOffice_Accueil.jsx"
 
 function Layout() {
     return (
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
             {
                 path: '/BackOffice_RdvListe',
                 element: <BackOffice_RdvListe />
+            },
+            {
+                path: '/BackOffice_Accueil',
+                element: <BackOffice_Accueil />
             }
 
         ]
