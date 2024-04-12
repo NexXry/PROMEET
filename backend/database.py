@@ -24,6 +24,7 @@ def connect():
         database=MYSQL_DB
     )
 
+
 def initialize_db_rendez_vous():
     conn = connect()
     cursor = conn.cursor()
@@ -35,7 +36,7 @@ def initialize_db_rendez_vous():
            date DATE,
            heure_debut TIME,
            heure_fin TIME,
-           etat  BOOLEAN DEFAULT FALSE,
+           etat  varchar(50) DEFAULT 'en attente',
            message VARCHAR(500),
            FOREIGN KEY (personne_id) REFERENCES personne(id),
            FOREIGN KEY (personne_pro_id) REFERENCES personne(id)
@@ -43,6 +44,7 @@ def initialize_db_rendez_vous():
     """
     cursor.execute(query, multi=True)
     conn.close()
+
 
 def initialize_db_profession():
     conn = connect()
