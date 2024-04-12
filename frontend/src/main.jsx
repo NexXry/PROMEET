@@ -13,9 +13,9 @@ import {ToastContainer} from "react-toastify";
 import {Deconnexion} from "./Composants/Deconnexion.jsx";
 import {Profil} from './Pages/Profil.jsx';
 import {Recherche} from "./Pages/Recherche.jsx";
-import {BackOffice} from "./Pages/BackOffice.jsx"
-import { BackOffice_RdvListe } from './Pages/BackOffice_RdvListe.jsx';
-import {BackOffice_Accueil} from  "./Pages/BackOffice_Accueil.jsx"
+import {BackOfficeProfil} from "./Pages/BackOffice.jsx"
+import {BackOffice_RdvListe} from './Pages/BackOffice_RdvListe.jsx';
+import {BackOffice_Accueil} from "./Pages/BackOffice_Accueil.jsx"
 import {Rdv} from "./Pages/Rdv.jsx";
 
 function Layout() {
@@ -55,16 +55,16 @@ const router = createBrowserRouter([
                 element: <Profil/>
             },
             {
+                path: '/backoffice/profil',
+                element: <BackOfficeProfil/>
+            },
+            {
+                path: '/backoffice/rdv',
+                element: <BackOffice_RdvListe/>
+            },
+            {
                 path: '/backoffice',
-                element: <BackOffice/>
-            },
-            {
-                path: '/BackOffice_RdvListe',
-                element: <BackOffice_RdvListe />
-            },
-            {
-                path: '/BackOffice_Accueil',
-                element: <BackOffice_Accueil />
+                element: <BackOffice_Accueil/>
             },
             {
                 path: '/rdv/:id',
