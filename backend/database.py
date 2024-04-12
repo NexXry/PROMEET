@@ -24,6 +24,25 @@ def connect():
         database=MYSQL_DB
     )
 
+def initialize_db_rendez_vous():
+    conn = connect()
+    cursor = conn.cursor()
+    query = """
+       CREATE TABLE IF NOT EXISTS rendez_vous (
+           id INT AUTO_INCREMENT PRIMARY KEY,
+           personne_id INT,
+           personne_pro_id INT,
+           date DATE,
+           heure_debut TIME,
+           heure_fin TIME,
+           etat  BOOLEAN DEFAULT FALSE,
+           message VARCHAR(500),
+           FOREIGN KEY (personne_id) REFERENCES personne(id),
+           FOREIGN KEY (personne_pro_id) REFERENCES personne(id)
+       );
+    """
+    cursor.execute(query, multi=True)
+    conn.close()
 
 def initialize_db_profession():
     conn = connect()
@@ -530,6 +549,7 @@ def initialize_db():
     initialize_db_profession()
     initialize_db_entreprise()
     initialize_db_personne()
+    initialize_db_rendez_vous()
     initialize_value_domaine()
     initialize_value_sous_domaine()
     initialize_value_competence()
