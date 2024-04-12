@@ -1,9 +1,11 @@
 import {useState, useEffect} from "react";
 import axios from "axios";
 import {Button, Input} from "@material-tailwind/react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
 
 const SearchBar = ({search, profilesRetrieved}) => {
+    const navigate = useNavigate();
     const [filtres, setFiltres] = useState([]);
     const [query, setQuery] = useState()//setQuery fonction permettant d'initialialiser la reponse a query
 
@@ -23,12 +25,19 @@ const SearchBar = ({search, profilesRetrieved}) => {
 
     function handleSearch(event) {
         event.preventDefault() //Eviter de rafraichir la page
-        axios.get('http://localhost:8000/recherche?q=' + event.target.query.value).then((response) => {//ajout de la valeur du parametre query.value
-            setQuery(response.data.find) //setQuery initialise la variable query par la réponse de l'api
+        if (search) {
+            axios.get('http://localhost:8000/recherche?q=' + event.target.query.value).then((response) => {//ajout de la valeur du parametre query.value
+                setQuery(response.data.find) //setQuery initialise la variable query par la réponse de l'api
+                console.log(response.data.find)
+                profilesRetrieved(response.data.find); //fonction prop pour lui passer la réponse de l'api
 
-            profilesRetrieved(response.data.find); //fonction prop pour lui passer la réponse de l'api
+            }).catch(() => {
+                toast.error('Erreur lors de la recherche');
+            });
+        } else {
+            navigate('/recherche?q=' + event.target.query.value);
+        }
 
-        })
     }
 
     return (
