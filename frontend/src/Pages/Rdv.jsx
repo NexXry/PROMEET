@@ -76,10 +76,6 @@ export function Rdv() {
         setTitle('');
     };
 
-    const handleSelectEvent = useCallback((event) => {
-        window.alert(event.title);
-    }, []);
-
     return (
         <div className="flex flex-col gap-4 my-20">
             <Typography variant="h1" className="text-2xl text-center text-bleuFonce">
@@ -89,7 +85,6 @@ export function Rdv() {
             <Calendar
                 localizer={localizer}
                 events={events}
-                onSelectEvent={handleSelectEvent}
                 onSelectSlot={handleSelectSlot}
                 selectable
                 culture="fr"
