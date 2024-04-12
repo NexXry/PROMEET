@@ -1,4 +1,3 @@
-
 import {Typography} from "@material-tailwind/react";
 import {UtilisateurList} from "./UtilisateurList.jsx";
 import React, {useState, useEffect} from "react";
@@ -14,8 +13,8 @@ export const ProfilListe = () => {
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-        
-    }, );
+
+    }, []);
     return (
         <div>
             <Typography variant={"h1"} className="font-bold text-xl text-bleuFonce text-center mb-6">
