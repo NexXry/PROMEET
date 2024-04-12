@@ -1,9 +1,9 @@
-import {Button, Chip} from "@material-tailwind/react";
+import {Button, Chip, Typography} from "@material-tailwind/react";
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 
-export const RdvListe = ({ nom, prenom, heure, jour, mois, annee }) => {
+export const RdvListe = ({nom, prenom, heure, jour, mois, annee}) => {
 
     // const [rdvEnCours, setRdvEnCours] = useState([]);
 
@@ -22,35 +22,41 @@ export const RdvListe = ({ nom, prenom, heure, jour, mois, annee }) => {
     const [rdvEnCours, setRdvEnCours] = useState([]);
     useEffect(() => {
         const data = [
-            { nom: "Doe", prenom: "John", heure: "10:00", jour: "10", mois: "Avril", annee: "2024" },
-            { nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024" },
-            { nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024" },
-            { nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024" },
-            { nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024" },
-            { nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024" },
-            { nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024" },
-            { nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024" },
-            { nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024" },
-            { nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024" },
-            { nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024" },
-            { nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024" },
-            { nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024" },
-            { nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024" }
+            {nom: "Doe", prenom: "John", heure: "10:00", jour: "10", mois: "Avril", annee: "2024"},
+            {nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024"},
+            {nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024"},
+            {nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024"},
+            {nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024"},
+            {nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024"},
+            {nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024"},
+            {nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024"},
+            {nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024"},
+            {nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024"},
+            {nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024"},
+            {nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024"},
+            {nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024"},
+            {nom: "Smith", prenom: "Alice", heure: "11:30", jour: "12", mois: "Avril", annee: "2024"}
         ];
         setRdvEnCours(data);
     }, []);
     return (
-        <div className="h-screen w-full overflow-y-scroll flex flex-col gap-2">
-            {rdvEnCours.map((rdv, index) => (
-                <RdvItem key={index} rdv={rdv} />
-            ))}
+        <div className=" w-full flex flex-col gap-2 my-10">
+            <Typography variant={"h1"} className="font-bold text-xl text-bleuFonce text-center mb-6">
+                Gestion des rendez-vous
+            </Typography>
+            <div className={"h-screen w-full overflow-y-scroll "}>
+                {rdvEnCours.map((rdv, index) => (
+                    <RdvItem key={index} rdv={rdv}/>
+                ))}
+            </div>
+
         </div>
     );
 }
-function RdvItem({ rdv }) {
+
+function RdvItem({rdv}) {
     return (
         <div className="border border-bleuFonce p-4 rounded-xl bg-nuanceBlanc">
-        <div className="">
             <div className="flex items-center justify-between mt-2 flex-wrap 2xl:flex-nowrap gap-3">
                 <Chip
                     className="text-white bg-bleuFonce rounded-lg px-4 py-2 mx-1 w-fit h-10"
@@ -61,6 +67,5 @@ function RdvItem({ rdv }) {
                 </div>
             </div>
         </div>
-    </div>
-);
+    );
 }

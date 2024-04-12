@@ -22,7 +22,8 @@ export const ProfilListe = () => {
             </Typography>
             <div className={'h-screen w-full overflow-y-scroll flex flex-col gap-2'}>
                 {profiles.map((item, index) => (
-                    <UtilisateurList id={item.id} nom={item.nom} prenom={item.prenom} profession={item.domaine}/>
+                    <UtilisateurList key={index} id={item.id} nom={item.nom} prenom={item.prenom}
+                                     profession={item.domaine}/>
                 ))}
             </div>
         </div>
