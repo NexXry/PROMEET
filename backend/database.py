@@ -850,3 +850,12 @@ def delUserById(userId: int):
     conn.commit()
     conn.close()
     return True
+
+def findRdvById(userId: int):
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM rendez_vous where  personne_id = %s or personne_pro_id = %s", (userId,userId,))
+    rdv = cursor.fetchall()
+    conn.close()
+    return rdv
+
