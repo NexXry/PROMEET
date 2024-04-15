@@ -141,6 +141,7 @@ async def get_allInfo():
 async def delete_user(userId: int, token: TokenData = Depends(JWTBearer())):
     extracted_token = deserialize_token(token)
     role = extracted_token['sub'].split(',')[2]
+    print(role)
     if role != "admin":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
