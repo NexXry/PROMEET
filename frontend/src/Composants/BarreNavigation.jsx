@@ -40,6 +40,15 @@ export function BarreNavigation() {
                         </Button>
                     </Link>
                     {/* Bouton pour se connecter */}
+                    {auth.isAuthenticated && auth.user.role === "admin" ?
+                        <Link to={"/backoffice"}>
+                            <Button
+                                size="sm"
+                                className=" bg-bleuFonce hidden lg:inline-block">
+                                BackOffice
+                            </Button>
+                        </Link>
+                        : ""}
                     {auth.isAuthenticated ?
                         <div>
                             <Link to={"/profil/" + auth?.user?.id}>

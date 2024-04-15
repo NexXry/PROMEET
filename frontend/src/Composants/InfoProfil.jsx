@@ -131,7 +131,7 @@ export function InfoProfil() {
     }
 
     return (
-        <div className={' my-5 md:my-36'}>
+        <div className={' my-5'}>
             <div className="flex flex-col md:flex-row gap-6 items-center w-full">
                 <Avatar src="https://docs.material-tailwind.com/img/face-2.jpg" alt="avatar" size="xxl"/>
                 <div className="border border-bleuFonce p-4 rounded-md flex-1 bg-nuanceBlanc w-full">
