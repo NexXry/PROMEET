@@ -8,7 +8,7 @@ class RendezVous(BaseModel):
     heure_debut: str
     heure_fin: str
     message: str
-    etat: bool
+    etat: str
 
 
 

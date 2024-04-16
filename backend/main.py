@@ -159,5 +159,5 @@ async def get_rendez_vous(userId: int):
         raise HTTPException(status_code=404, detail="User not found")
     
     result = findRdvById(userId)
-    return {'find': result}
+    return {'data': result}
     
