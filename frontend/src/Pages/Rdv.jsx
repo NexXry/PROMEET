@@ -9,6 +9,7 @@ import {toast} from 'react-toastify';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import fr from 'date-fns/locale/fr';
 import axios from "axios";
+import {authStore} from "../store/authStore.js";
 
 const locales = {
     fr: fr,
@@ -37,6 +38,7 @@ const localizer = dateFnsLocalizer({
 });
 
 export function Rdv() {
+    const {auth} = authStore()
     const [events, setEvents] = useState([]);
     const [pro, setPro] = useState();
     const [title, setTitle] = useState('');
@@ -81,8 +83,15 @@ export function Rdv() {
                         type: 'error',
                     });
                 } else {
-                    handleOpen();
-                    setIncomEvent({start, end});
+                    if (auth?.user?.id === undefined) {
+                        toast('Vous devez être connecté pour prendre un rendez-vous', {
+                            type: 'error',
+                        });
+
+                    } else {
+                        handleOpen();
+                        setIncomEvent({start, end});
+                    }
                 }
             } else {
                 toast('Vous ne pouvez pas prendre de rendez-vous dans le passé', {
@@ -93,15 +102,40 @@ export function Rdv() {
     }, [events, handleOpen]);
 
     const handleCreateEvent = () => {
-        const {start, end} = incomEvent;
-        const newEvent = {
-            title: title,
-            start: start,
-            end: end,
-        };
+        if (auth.user.id === undefined) {
+            toast('Vous devez être connecté pour prendre un rendez-vous', {
+                type: 'error',
+            });
+        } else {
+            const {start, end} = incomEvent;
+            const newEvent = {
+                title: title,
+                start: start,
+                end: end,
+            };
 
-        setEvents([...events, newEvent]);
-        handleOpen();
+            setEvents([...events, newEvent]);
+            handleOpen();
+
+            axios.post('http://localhost:8000/create-rdvs', {
+                date: format(start, 'yyyy-MM-dd'),
+                heure_debut: format(start, 'HH:mm:ss'),
+                heure_fin: format(end, 'HH:mm:ss'),
+                message: title,
+                etat: "en attente",
+                personne_id: auth.user.id,
+                personne_pro_id: id,
+            }, {headers: {Authorization: 'Bearer ' + auth.token}}).then(() => {
+                toast('Rendez-vous créé avec succès', {
+                    type: 'success',
+                });
+            }).catch(() => {
+                toast('Erreur lors de la création du rendez-vous', {
+                    type: 'error',
+                });
+            });
+        }
+
         setTitle('');
     };
 

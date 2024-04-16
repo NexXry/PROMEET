@@ -1,76 +1,40 @@
-import {Button, Card, CardHeader, Typography} from "@material-tailwind/react";
+import {Button, Typography} from "@material-tailwind/react";
+import {useEffect, useState} from "react";
+import axios from "axios";
+import {authStore} from "../store/authStore.js";
+import {useNavigate} from "react-router-dom";
+import {addSeconds, parseISO} from "date-fns";
 
-const TABLE_HEAD = ["Pro", "Date/Heure", "Status", "Actions "];
-
-const TABLE_ROWS = [
-    {
-        pro: "John Michael",
-        job: "Manager",
-        date: "23/04/18",
-    },
-    {
-        name: "Alexa Liras",
-        job: "Developer",
-        date: "23/04/18",
-    }, {
-        name: "Alexa Liras",
-        job: "Developer",
-        date: "23/04/18",
-    }, {
-        name: "Alexa Liras",
-        job: "Developer",
-        date: "23/04/18",
-    }, {
-        name: "Alexa Liras",
-        job: "Developer",
-        date: "23/04/18",
-    }, {
-        name: "Alexa Liras",
-        job: "Developer",
-        date: "23/04/18",
-    }, {
-        name: "Alexa Liras",
-        job: "Developer",
-        date: "23/04/18",
-    }, {
-        name: "Alexa Liras",
-        job: "Developer",
-        date: "23/04/18",
-    }, {
-        name: "Alexa Liras",
-        job: "Developer",
-        date: "23/04/18",
-    }, {
-        name: "Alexa Liras",
-        job: "Developer",
-        date: "23/04/18",
-    }, {
-        name: "Alexa Liras",
-        job: "Developer",
-        date: "23/04/18",
-    }, {
-        name: "Alexa Liras",
-        job: "Developer",
-        date: "23/04/18",
-    },
-    {
-        name: "Laurent Perrier",
-        job: "Executive",
-        date: "19/09/17",
-    },
-    {
-        name: "Michael Levi",
-        job: "Developer",
-        date: "24/12/08",
-    },
-    {
-        name: "Richard Gran",
-        job: "Manager",
-        date: "04/10/21",
-    },
-];
+const TABLE_HEAD = ["Pro", "Date/Heure", "message", "Status", "Actions "];
 
 export const ListRdvAValider = () => {
+    const navigate = useNavigate();
+    const {auth} = authStore();
+    const [tablesRows, setTablesRows] = useState([]);
+    useEffect(() => {
+        if (!auth.user) return;
+        axios.get('http://localhost:8000/mes-rendez-vous', {headers: {Authorization: 'Bearer ' + auth.token}}).then((response) => {
+            setTablesRows([...response.data.data.filter((rdv) => rdv.personne_pro_id == auth.user.id)])
+        }).catch((error) => {
+            if (error.response.status === 403) {
+                navigate('/logout');
+            }
+        });
+    }, []);
+
+    const formatDateFromApi = (data) => {
+        const dateDebutISO = `${data.date}T00:00:00`;
+        const dateDebut = parseISO(dateDebutISO);
+
+        const heureDebutEnSecondes = data.heure_debut;
+        const heureFinEnSecondes = data.heure_fin;
+
+        const dateHeureDebut = addSeconds(dateDebut, heureDebutEnSecondes);
+        const dateHeureFin = addSeconds(dateDebut, heureFinEnSecondes);
+
+        return 'Le ' + dateHeureDebut.toLocaleDateString() + ' de ' + dateHeureDebut.toLocaleTimeString() + ' à ' + dateHeureFin.toLocaleTimeString();
+    }
+
     return (
         <div className="w-full h-96 overflow-y-scroll">
             <Typography variant={"h4"} className={'text-bleuFonce my-2'}>Listes des propositions de
@@ -95,19 +59,19 @@ export const ListRdvAValider = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {TABLE_ROWS.map(({name, job, date}, index) => {
-                    const isLast = index === TABLE_ROWS.length - 1;
+                {tablesRows.map((pro, index) => {
+                    const isLast = index === tablesRows.length - 1;
                     const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
                     return (
-                        <tr key={name}>
+                        <tr key={index}>
                             <td className={classes}>
                                 <Typography
                                     variant="small"
                                     color="blue-gray"
                                     className="font-normal"
                                 >
-                                    {name}
+                                    {pro?.nom}
                                 </Typography>
                             </td>
                             <td className={classes}>
@@ -116,7 +80,16 @@ export const ListRdvAValider = () => {
                                     color="blue-gray"
                                     className="font-normal"
                                 >
-                                    {job}
+                                    {formatDateFromApi(pro)}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography
+                                    variant="small"
+                                    color="blue-gray"
+                                    className="font-normal break-words max-w-40"
+                                >
+                                    {pro?.message.length > 100 ? pro?.message.substring(0, 100) + '...' : pro?.message}
                                 </Typography>
                             </td>
                             <td className={classes}>
@@ -125,27 +98,24 @@ export const ListRdvAValider = () => {
                                     color="blue-gray"
                                     className="font-normal"
                                 >
-                                    {date}
+                                    {pro?.etat}
                                 </Typography>
                             </td>
-                            <td className={classes}>
-                                <div className={"flex gap-1 flex-wrap"}>
-                                    <Button
-                                        variant="filled"
-                                        size={"sm"}
-                                        className="font-medium bg-green-500"
-                                    >
-                                        Confirmer
-                                    </Button>
-                                    <Button
-                                        variant="filled"
-                                        size={"sm"}
-                                        className="font-medium bg-red-500"
-                                    >
-                                        Annuler
-                                    </Button>
-                                </div>
-
+                            <td className={`${classes} flex flex-wrap gap-2`}>
+                                <Button
+                                    variant="filled"
+                                    size={"sm"}
+                                    className="font-medium bg-green-500"
+                                >
+                                    Confirmé
+                                </Button>
+                                <Button
+                                    variant="filled"
+                                    size={"sm"}
+                                    className="font-medium bg-red-500"
+                                >
+                                    Annuler
+                                </Button>
                             </td>
                         </tr>
                     );
