@@ -10,7 +10,6 @@ from psycopg2 import sql
 from psycopg2.extras import DictCursor
 from src.model import Rdv
 
-
 load_dotenv()
 
 MYSQL_HOST = os.getenv("MYSQL_HOST")
@@ -854,22 +853,42 @@ def delUserById(userId: int):
     conn.close()
     return True
 
+
 def createRdv(rdv: Rdv):
     try:
         conn = connect()
         cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM rendez_vous  WHERE personne_pro_id = %s AND date = %s AND heure_debut = %s", (rdv.personne_pro_id, rdv.date, rdv.heure_debut))
+        cursor.execute(f"SELECT * FROM rendez_vous  WHERE personne_pro_id = %s AND date = %s AND heure_debut = %s",
+                       (rdv.personne_pro_id, rdv.date, rdv.heure_debut))
         result = cursor.fetchone()
         if result is None:
             cursor.execute(f"""INSERT INTO rendez_vous (personne_id, personne_pro_id, date, heure_debut, heure_fin
             , etat, message)  VALUES (%s, %s, %s, %s, %s, %s, %s)""",
-                        (rdv.personne_id, rdv.personne_pro_id, rdv.date, rdv.heure_debut, rdv.heure_fin, rdv.etat, rdv.message))
+                           (rdv.personne_id, rdv.personne_pro_id, rdv.date, rdv.heure_debut, rdv.heure_fin, rdv.etat,
+                            rdv.message))
             conn.commit()
             conn.close()
             return True
         else:
-            print("Créneau déjà occupé")
             return False
     except Exception as e:
         print(f"Error in createRdv: {e}")
         return False
+
+
+def findRdvById(userId: int):
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT personne_id AS personne,personne_pro_id as pro_id,date,heure_debut,heure_fin,message FROM rendez_vous where  personne_id = %s",
+        (userId,))
+    rdv = cursor.fetchall()
+    conn.close()
+
+    formatedRdv = []
+    for r in rdv:
+        formatedRdv.append(
+            {"personne": r[0], "personne_pro_id": r[1], 'date': r[2], 'heure_debut': r[3], 'heure_fin': r[4],
+             'message': r[5]})
+
+    return formatedRdv

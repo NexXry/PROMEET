@@ -34,19 +34,19 @@ export function InfoProfil() {
     useEffect(() => {
         axios.get(`http://localhost:8000/users/${id}`)
             .then(response => {
-                setNom(response.data.nom)
-                setPrenom(response.data.prenom)
-                setEmail(response.data.email)
-                setTelephone(response.data.telephone)
-                setDescription(response.data.description)
-                setDomaine({value: response.data.domaine, label: response.data.domaine})
-                setSousDomaine({value: response.data.sous_domaine, label: response.data.sous_domaine})
-                setProfession({value: response.data.profession, label: response.data.profession})
-                setEntreprise({value: response.data.entreprise, label: response.data.entreprise})
+                setNom(response.data.nom ?? "")
+                setPrenom(response.data.prenom ?? "")
+                setEmail(response.data.email ?? "")
+                setTelephone(response.data.telephone ?? "")
+                setDescription(response.data.description ?? "")
+                setDomaine({value: response.data.domaine ?? "", label: response.data.domaine ?? ""})
+                setSousDomaine({value: response.data.sous_domaine ?? "", label: response.data.sous_domaine ?? ""})
+                setProfession({value: response.data.profession ?? "", label: response.data.profession ?? ""})
+                setEntreprise({value: response.data.entreprise ?? "", label: response.data.entreprise ?? ""})
 
                 let competences = response.data.competences.filter((x, i) => response.data.competences.indexOf(x) === i)
                 competences = competences.map(competence => {
-                    return {value: competence, label: competence}
+                    return {value: competence ?? "", label: competence ?? ""}
                 })
                 setCompetences(competences)
 
@@ -55,7 +55,7 @@ export function InfoProfil() {
             .then((response) => {
                 for (let key in response.data) {
                     response.data[key] = response.data[key].map((value) => {
-                        return {value: value[0], label: value[0]}
+                        return {value: value[0] ?? "", label: value[0] ?? ""}
                     })
                 }
                 setLists(response.data)
@@ -63,9 +63,8 @@ export function InfoProfil() {
     }, [id]);
 
     function handleUpdate() {
-        console.log(user.entreprise)
         if (auth.isAuthenticated) {
-            if (user.email !== "" && user.nom !== "" && user.prenom !== "" && user.telephone !== "" && user.description !== "" && user.domaine.value !== "" && user.sous_domaine.value !== "" && user.profession.value !== "" && user.competences.value !== []) {
+            if (user.email !== "" && user.nom !== "" && user.prenom !== "" && user.telephone !== "" && user.description !== "") {
                 let entreprise;
                 if (notEntreprise) {
                     entreprise = user.entreprise
@@ -83,7 +82,7 @@ export function InfoProfil() {
                     sous_domaine: user.sous_domaine.value,
                     profession: user.profession.value,
                     entreprise: entreprise,
-                    competences: user.competences.map(competence => competence.value)
+                    competences: user.competences ? user.competences.map(competence => competence.value) : []
                 }
                 toast.promise(axios.put('http://localhost:8000/update-users/' + auth.user.id, formatedUser, {
                         headers: {
@@ -97,6 +96,8 @@ export function InfoProfil() {
                         error: "Une erreur s'est produite lors de la mise à jour ❌"
                     }
                 )
+            } else {
+                toast.error("Veuillez remplir tous les champs obligatoires")
             }
         }
     }
@@ -130,7 +131,7 @@ export function InfoProfil() {
     }
 
     return (
-        <div className={' my-5 md:my-36'}>
+        <div className={' my-5'}>
             <div className="flex flex-col md:flex-row gap-6 items-center w-full">
                 <Avatar src="https://docs.material-tailwind.com/img/face-2.jpg" alt="avatar" size="xxl"/>
                 <div className="border border-bleuFonce p-4 rounded-md flex-1 bg-nuanceBlanc w-full">
@@ -206,7 +207,6 @@ export function InfoProfil() {
                                         <Input
                                             label={"Entreprise"}
                                             onChange={(e) => setEntreprise(e.target.value)}
-                                            required={true}
                                         >
                                         </Input>
                                         :
@@ -215,7 +215,6 @@ export function InfoProfil() {
                                             onChange={(value) => {
                                                 setEntreprise(value)
                                             }}
-                                            required={true}
                                             options={lists.entreprise}
                                         />
                                     }
@@ -235,7 +234,6 @@ export function InfoProfil() {
                                     onChange={(value) => {
                                         setSousDomaine(value)
                                     }}
-                                    required={true}
                                     options={lists.sous_domaine}
                                 />
                             </div>
@@ -246,7 +244,6 @@ export function InfoProfil() {
                                     onChange={(value) => {
                                         setProfession(value)
                                     }}
-                                    required={true}
                                     options={lists.profession}
                                     classNames={'overflow-y-scroll h-40'}
                                 />
@@ -270,7 +267,6 @@ export function InfoProfil() {
                                             </div>
                                             <Input
                                                 label={"nouvelle compétence"}
-                                                required={true}
                                             >
                                             </Input>
                                             <Button
@@ -286,7 +282,6 @@ export function InfoProfil() {
                                             onChange={(value) => {
                                                 setCompetences(value)
                                             }}
-                                            required={true}
                                             isMultiple={true}
                                             options={lists.competences}
                                             classNames={'overflow-y-scroll h-40'}

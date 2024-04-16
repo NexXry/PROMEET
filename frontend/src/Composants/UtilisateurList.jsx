@@ -1,7 +1,15 @@
 import {Button, Chip} from "@material-tailwind/react";
 import {Link} from "react-router-dom";
+import axios from 'axios';
+import { authStore } from "../store/authStore";
+import { toast } from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
-export const UtilisateurList = ({nom, prenom, profession, id}) => {
+
+export const UtilisateurList = ({nom, prenom, profession, id, suppression}) => {
+    
+    
+    
     return (
         <div className="border border-bleuFonce p-4 rounded-xl bg-nuanceBlanc">
             <div className="">
@@ -13,7 +21,10 @@ export const UtilisateurList = ({nom, prenom, profession, id}) => {
                         <Link to={'/profil/' + id}>
                             <Button className="bg-bleuFonce text-white rounded px-4 py-2 w-44">Voir Profil</Button>
                         </Link>
-                        <Button className="bg-red-700 text-white rounded px-4 py-2 w-44">Supprimer</Button>
+
+                        <Button onClick= {()=> {suppression(id)}} className="bg-red-700 text-white rounded px-4 py-2 w-44">Supprimer</Button>
+
+
                     </div>
                 </div>
             </div>
