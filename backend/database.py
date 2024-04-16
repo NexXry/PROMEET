@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 import mysql.connector
 from dotenv import load_dotenv
 import os
@@ -7,6 +8,8 @@ from src.utils import get_hashed_password
 import psycopg2
 from psycopg2 import sql
 from psycopg2.extras import DictCursor
+from src.model import Rdv
+
 
 load_dotenv()
 
@@ -850,3 +853,23 @@ def delUserById(userId: int):
     conn.commit()
     conn.close()
     return True
+
+def createRdv(rdv: Rdv):
+    try:
+        conn = connect()
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT * FROM rendez_vous  WHERE personne_pro_id = %s AND date = %s AND heure_debut = %s", (rdv.personne_pro_id, rdv.date, rdv.heure_debut))
+        result = cursor.fetchone()
+        if result is None:
+            cursor.execute(f"""INSERT INTO rendez_vous (personne_id, personne_pro_id, date, heure_debut, heure_fin
+            , etat, message)  VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+                        (rdv.personne_id, rdv.personne_pro_id, rdv.date, rdv.heure_debut, rdv.heure_fin, rdv.etat, rdv.message))
+            conn.commit()
+            conn.close()
+            return True
+        else:
+            print("Créneau déjà occupé")
+            return False
+    except Exception as e:
+        print(f"Error in createRdv: {e}")
+        return False

@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Depends
 from fastapi import FastAPI
 from starlette import status
-from database import connect, initialize_db, retourner_domaines, findUserById, findUserByEmail, createUser, \
+from database import connect, initialize_db, retourner_domaines, findUserById, findUserByEmail, createUser, createRdv, \
     updateUserById, findAllDomaines, findAllSousDomaines, findAllCompetences, findAllProfessions, findAllEntreprises, \
     recherche_dans_la_base, delUserById
 from src.auth_bearer import JWTBearer
@@ -15,6 +15,7 @@ from src.utils import (
     verify_password, deserialize_token
 )
 from src.model.Formulaire import Formulaire
+from src.model.Rdv import Rdv
 
 app = FastAPI()
 conn = connect()
@@ -151,3 +152,25 @@ async def delete_user(userId: int, token: TokenData = Depends(JWTBearer())):
         raise HTTPException(status_code=404, detail="User not found")
     delUserById(userId)
     return {"message": "User deleted successfully"}
+
+@app.put('/update-users/{userId}', response_model=UpdateUser)
+async def update_user(userId: int, user: UpdateUser, token: TokenData = Depends(JWTBearer())):
+    extracted_token = deserialize_token(token)
+    id = extracted_token['sub'].split(',')[0]
+    if str(id) != str(userId):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You are not authorized to perform this action"
+        )
+    user = updateUserById(userId, user)
+    print(user)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+@app.post("/create-rdvs")
+async def create(rdv: Rdv):
+    result = createRdv(rdv)
+    if result is False:
+        raise HTTPException(status_code=401, detail="Unable to create user")
+    return result
