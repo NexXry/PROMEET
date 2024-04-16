@@ -1,13 +1,14 @@
-import {useState, useCallback} from 'react';
+import {useState, useCallback, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
 import {Button, Card, CardBody, Dialog, Input, Typography} from '@material-tailwind/react';
 import {Calendar, dateFnsLocalizer, Views} from 'react-big-calendar';
-import {format, parse, startOfWeek, getDay, isEqual} from 'date-fns';
+import {format, parse, startOfWeek, getDay, isEqual, parseISO, addSeconds} from 'date-fns';
 import {isPast} from 'date-fns';
 import {toast} from 'react-toastify';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import fr from 'date-fns/locale/fr';
+import axios from "axios";
 
 const locales = {
     fr: fr,
@@ -37,12 +38,38 @@ const localizer = dateFnsLocalizer({
 
 export function Rdv() {
     const [events, setEvents] = useState([]);
+    const [nom, setNom] = useState();
     const [title, setTitle] = useState('');
     const [incomEvent, setIncomEvent] = useState({});
     const [open, setOpen] = useState(false);
     const {id} = useParams();
 
+    useEffect(() => {
+        axios.get('http://localhost:8000/rendez_vous/' + id).then((response) => {
+            console.log(response.data.data)
+            const rdvs = response.data.data.map((rdv) => {
+                const dates = formatDateFromApi(rdv)
+                return {title: rdv.message, start: dates[0], end: dates[1]}
+            })
+            setEvents(rdvs)
+        })
+
+    }, []);
+
     const handleOpen = () => setOpen(!open);
+
+    const formatDateFromApi = (data) => {
+        const dateDebutISO = `${data.date}T00:00:00`;
+        const dateDebut = parseISO(dateDebutISO);
+
+        const heureDebutEnSecondes = data.heure_debut;
+        const heureFinEnSecondes = data.heure_fin;
+
+        const dateHeureDebut = addSeconds(dateDebut, heureDebutEnSecondes);
+        const dateHeureFin = addSeconds(dateDebut, heureFinEnSecondes);
+
+        return [dateHeureDebut, dateHeureFin]
+    }
 
     const handleSelectSlot = useCallback(({action, start, end}) => {
         if (action !== 'select') {
@@ -79,7 +106,7 @@ export function Rdv() {
     return (
         <div className="flex flex-col gap-4 my-20">
             <Typography variant="h1" className="text-2xl text-center text-bleuFonce">
-                Réservez un rendez-vous avec Jean Michel
+                Réservez un rendez-vous avec {nom}
             </Typography>
 
             <Calendar
