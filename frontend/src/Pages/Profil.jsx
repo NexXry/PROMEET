@@ -11,7 +11,7 @@ export const Profil = () => {
         <>
             <InfoProfil></InfoProfil>
             {auth?.user?.id == id ?
-                <div className={'flex flex-col lg:flex-row justify-between gap-10'}>
+                <div className={'flex flex-col justify-between gap-10'}>
                     <ListRdvUser/>
                     <ListRdvAValider/>
                 </div> :

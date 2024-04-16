@@ -5,7 +5,7 @@ import Select from "react-tailwindcss-select";
 import {userProfileStore} from "../store/userProfilStore.js";
 import axios from "axios";
 import {toast} from "react-toastify";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {updateProfileStore} from "../store/updateProfilStore.js";
 
 export function InfoProfil() {
@@ -337,6 +337,11 @@ export function InfoProfil() {
                                         {renderCompetences()}
                                     </div>
                                 </div>
+                                <Link to={'/rdv/' + id}>
+                                    <Button className={"bg-bleuFonce"}>
+                                        Réservez un rendez-vous
+                                    </Button>
+                                </Link>
                             </div>
                         </>
                     }

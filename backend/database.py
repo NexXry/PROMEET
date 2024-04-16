@@ -880,15 +880,35 @@ def findRdvById(userId: int):
     conn = connect()
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT personne_id AS personne,personne_pro_id as pro_id,date,heure_debut,heure_fin,message FROM rendez_vous where  personne_id = %s",
-        (userId,))
+        "SELECT personne_id AS personne, personne_pro_id as pro_id, date ,heure_debut ,heure_fin ,message, etat FROM rendez_vous where personne_pro_id = %s or personne_id = %s",
+        (userId, userId))
     rdv = cursor.fetchall()
     conn.close()
 
     formatedRdv = []
     for r in rdv:
         formatedRdv.append(
-            {"personne": r[0], "personne_pro_id": r[1], 'date': r[2], 'heure_debut': r[3], 'heure_fin': r[4],
-             'message': r[5]})
+            {"personne": r[0], "personne_pro_id": r[1], 'date': r[2], 'heure_debut': r[3],
+             'heure_fin': r[4], 'message': r[5], 'etat': r[6]}
+        )
+
+    return formatedRdv
+
+
+def findRdvByIdWithName(userId: int):
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT personne.nom, personne.prenom ,personne_id AS personne, personne_pro_id as pro_id, date ,heure_debut ,heure_fin ,message, etat FROM rendez_vous INNER JOIN personne on personne.id = personne_pro_id where personne_pro_id = %s or personne_id = %s",
+        (userId, userId))
+    rdv = cursor.fetchall()
+    conn.close()
+
+    formatedRdv = []
+    for r in rdv:
+        formatedRdv.append(
+            {"nom": r[0] + " " + r[1], "personne": r[2], "personne_pro_id": r[3], 'date': r[4], 'heure_debut': r[5],
+             'heure_fin': r[6], 'message': r[7], 'etat': r[8]}
+        )
 
     return formatedRdv
