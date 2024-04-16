@@ -38,7 +38,7 @@ const localizer = dateFnsLocalizer({
 
 export function Rdv() {
     const [events, setEvents] = useState([]);
-    const [nom, setNom] = useState();
+    const [pro, setPro] = useState();
     const [title, setTitle] = useState('');
     const [incomEvent, setIncomEvent] = useState({});
     const [open, setOpen] = useState(false);
@@ -46,14 +46,16 @@ export function Rdv() {
 
     useEffect(() => {
         axios.get('http://localhost:8000/rendez_vous/' + id).then((response) => {
-            console.log(response.data.data)
             const rdvs = response.data.data.map((rdv) => {
                 const dates = formatDateFromApi(rdv)
                 return {title: rdv.message, start: dates[0], end: dates[1]}
             })
             setEvents(rdvs)
         })
-
+        axios.get(`http://localhost:8000/users/${id}`)
+            .then(response => {
+                setPro(response.data)
+            })
     }, []);
 
     const handleOpen = () => setOpen(!open);
@@ -106,7 +108,7 @@ export function Rdv() {
     return (
         <div className="flex flex-col gap-4 my-20">
             <Typography variant="h1" className="text-2xl text-center text-bleuFonce">
-                Réservez un rendez-vous avec {nom}
+                Réservez un rendez-vous avec {pro?.nom + ' ' + pro?.prenom}
             </Typography>
 
             <Calendar
