@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 import mysql.connector
 from dotenv import load_dotenv
 import os
@@ -7,6 +8,7 @@ from src.utils import get_hashed_password
 import psycopg2
 from psycopg2 import sql
 from psycopg2.extras import DictCursor
+from src.model import Rdv
 
 load_dotenv()
 
@@ -852,6 +854,29 @@ def delUserById(userId: int):
     return True
 
 
+def createRdv(rdv: Rdv):
+    try:
+        conn = connect()
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT * FROM rendez_vous  WHERE personne_pro_id = %s AND date = %s AND heure_debut = %s",
+                       (rdv.personne_pro_id, rdv.date, rdv.heure_debut))
+        result = cursor.fetchone()
+        if result is None:
+            cursor.execute(f"""INSERT INTO rendez_vous (personne_id, personne_pro_id, date, heure_debut, heure_fin
+            , etat, message)  VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+                           (rdv.personne_id, rdv.personne_pro_id, rdv.date, rdv.heure_debut, rdv.heure_fin, rdv.etat,
+                            rdv.message))
+            conn.commit()
+            conn.close()
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(f"Error in createRdv: {e}")
+        return False
+
+
+
 def findRdvById(userId: int):
     conn = connect()
     cursor = conn.cursor()
@@ -859,6 +884,8 @@ def findRdvById(userId: int):
         "SELECT personne_id AS personne,personne_pro_id as pro_id,date,heure_debut,heure_fin,message FROM rendez_vous LEFT JOIN personne ON personne.id = personne_id where personne_id = %s",
         (userId,))
     rdv = cursor.fetchall()
+    conn.close()
+
     formatedRdv = []
     for r in rdv:
         formatedRdv.append(
@@ -866,3 +893,4 @@ def findRdvById(userId: int):
              'heure_fin': r[5], 'message': r[6]})
 
     return formatedRdv
+
