@@ -850,3 +850,17 @@ def delUserById(userId: int):
     conn.commit()
     conn.close()
     return True
+
+def findRdvById(userId: int):
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT personne_id AS personne,personne_pro_id as pro_id,date,heure_debut,heure_fin,message FROM rendez_vous where  personne_id = %s", (userId,))
+    rdv = cursor.fetchall()
+    conn.close()
+
+    formatedRdv = []
+    for r in rdv:
+        formatedRdv.append({"personne": r[0], "personne_pro_id": r[1],'date': r[2], 'heure_debut': r[3], 'heure_fin': r[4], 'message': r[5]})
+
+    return formatedRdv
+

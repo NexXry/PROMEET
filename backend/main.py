@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from starlette import status
 from database import connect, initialize_db, retourner_domaines, findUserById, findUserByEmail, createUser, \
     updateUserById, findAllDomaines, findAllSousDomaines, findAllCompetences, findAllProfessions, findAllEntreprises, \
-    recherche_dans_la_base, delUserById
+    recherche_dans_la_base, delUserById, findRdvById
 from src.auth_bearer import JWTBearer
 from src.model.Token import TokenSchema, auth, TokenData
 from src.model.User import User, UpdateUser
@@ -152,3 +152,13 @@ async def delete_user(userId: int, token: TokenData = Depends(JWTBearer())):
         raise HTTPException(status_code=404, detail="User not found")
     delUserById(userId)
     return {"message": "User deleted successfully"}
+
+@app.get('/rendez_vous/{userId}')
+async def get_rendez_vous(userId: int):
+    user = findUserById(userId)
+    if user is None :
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    result = findRdvById(userId)
+    return {'data': result}
+    
