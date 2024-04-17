@@ -877,29 +877,33 @@ def createRdv(rdv: Rdv):
 
 
 def findRdvById(userId: int):
-    conn = connect()
-    cursor = conn.cursor()
-    cursor.execute(
-        "SELECT personne_id AS personne, personne_pro_id as pro_id, date ,heure_debut ,heure_fin ,message, etat FROM rendez_vous where personne_pro_id = %s or personne_id = %s",
-        (userId, userId))
-    rdv = cursor.fetchall()
-    conn.close()
+    try:
+        conn = connect()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT personne_id AS personne, personne_pro_id as pro_id, date ,heure_debut ,heure_fin ,message, etat FROM rendez_vous where personne_pro_id = %s or personne_id = %s",
+            (userId, userId))
+        rdv = cursor.fetchall()
+        conn.close()
 
-    formatedRdv = []
-    for r in rdv:
-        formatedRdv.append(
-            {"personne": r[0], "personne_pro_id": r[1], 'date': r[2], 'heure_debut': r[3],
-             'heure_fin': r[4], 'message': r[5], 'etat': r[6]}
-        )
+        formatedRdv = []
+        for r in rdv:
+            formatedRdv.append(
+                {"personne": r[0], "personne_pro_id": r[1], 'date': r[2], 'heure_debut': r[3],
+                 'heure_fin': r[4], 'message': r[5], 'etat': r[6]}
+            )
 
-    return formatedRdv
+        return formatedRdv
+    except Exception as e:
+        print(f"Error in findRdvById: {e}")
+        return None
 
 
 def findRdvByIdWithName(userId: int):
     conn = connect()
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT personne.nom, personne.prenom ,personne_id AS personne, personne_pro_id as pro_id, date ,heure_debut ,heure_fin ,message, etat FROM rendez_vous INNER JOIN personne on personne.id = personne_pro_id where personne_pro_id = %s or personne_id = %s",
+        "SELECT rendez_vous.id,personne.nom, personne.prenom ,personne_id AS personne, personne_pro_id as pro_id, date ,heure_debut ,heure_fin ,message, etat FROM rendez_vous INNER JOIN personne on personne.id = personne_pro_id where personne_pro_id = %s or personne_id = %s",
         (userId, userId))
     rdv = cursor.fetchall()
     conn.close()
@@ -907,8 +911,45 @@ def findRdvByIdWithName(userId: int):
     formatedRdv = []
     for r in rdv:
         formatedRdv.append(
-            {"nom": r[0] + " " + r[1], "personne": r[2], "personne_pro_id": r[3], 'date': r[4], 'heure_debut': r[5],
-             'heure_fin': r[6], 'message': r[7], 'etat': r[8]}
+            {"id": r[0], "nom": r[1] + " " + r[2], "personne": r[3], "personne_pro_id": r[4], 'date': r[5], 'heure_debut': r[6],
+             'heure_fin': r[7], 'message': r[8], 'etat': r[9]}
         )
 
     return formatedRdv
+
+def findRdvForId(rdvId):
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT personne_id AS personne, personne_pro_id as personne_pro FROM rendez_vous where id = %s",
+        (rdvId,))
+    rdv = cursor.fetchone()
+    conn.close()
+
+    formatedRdv = {"personne": rdv[0], "personne_pro": rdv[1]}
+
+    return formatedRdv
+
+def DelRdvById(rdvId: int):
+    try:
+        conn = connect()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM rendez_vous WHERE id = %s", (rdvId,))
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"Error in DelRdvById: {e}")
+        return False
+
+def UpdateRdv(rdvId):
+    try:
+        conn = connect()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE rendez_vous SET etat = 'accepté' WHERE id = %s", (rdvId,))
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"Error in UpdateRdv: {e}")
+        return False

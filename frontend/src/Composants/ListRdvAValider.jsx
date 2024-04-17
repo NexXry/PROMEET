@@ -4,23 +4,24 @@ import axios from "axios";
 import {authStore} from "../store/authStore.js";
 import {useNavigate} from "react-router-dom";
 import {addSeconds, parseISO} from "date-fns";
+import {toast} from "react-toastify";
 
 const TABLE_HEAD = ["Pro", "Date/Heure", "message", "Status", "Actions "];
 
-export const ListRdvAValider = () => {
+export const ListRdvAValider = ({updated, setUpdated}) => {
     const navigate = useNavigate();
     const {auth} = authStore();
     const [tablesRows, setTablesRows] = useState([]);
     useEffect(() => {
         if (!auth.user) return;
         axios.get('http://localhost:8000/mes-rendez-vous', {headers: {Authorization: 'Bearer ' + auth.token}}).then((response) => {
-            setTablesRows([...response.data.data.filter((rdv) => rdv.personne_pro_id == auth.user.id)])
+            setTablesRows([...response.data.data.filter((rdv) => rdv.personne_pro_id == auth.user.id && rdv.etat === 'en attente')]);
         }).catch((error) => {
             if (error.response.status === 403) {
                 navigate('/logout');
             }
         });
-    }, []);
+    }, [updated]);
 
     const formatDateFromApi = (data) => {
         const dateDebutISO = `${data.date}T00:00:00`;
@@ -33,6 +34,27 @@ export const ListRdvAValider = () => {
         const dateHeureFin = addSeconds(dateDebut, heureFinEnSecondes);
 
         return 'Le ' + dateHeureDebut.toLocaleDateString() + ' de ' + dateHeureDebut.toLocaleTimeString() + ' à ' + dateHeureFin.toLocaleTimeString();
+    }
+
+    function handleCancel(id) {
+        axios.delete('http://localhost:8000/delete-rdv/' + id, {headers: {Authorization: 'Bearer ' + auth.token}}).then(() => {
+            setTablesRows([...tablesRows.filter((rdv) => rdv.id !== id)]);
+            toast('Rendez-vous annulé avec succès', {type: 'success'})
+        }).catch(() => {
+            toast('Erreur lors de l\'annulation du rendez-vous', {type: 'error'})
+        });
+        setUpdated(!updated);
+    }
+
+    function handleConfirm(id) {
+        console.log(auth.token)
+        axios.post('http://localhost:8000/valider-rdv/' + id, {}, {headers: {Authorization: 'Bearer ' + auth.token}}).then(() => {
+            setTablesRows([...tablesRows.filter((rdv) => rdv.id !== id)]);
+            toast('Rendez-vous confirmé avec succès', {type: 'success'})
+        }).catch(() => {
+            toast('Erreur lors de la confirmation du rendez-vous', {type: 'error'})
+        });
+        setUpdated(!updated);
     }
 
     return (
@@ -106,6 +128,7 @@ export const ListRdvAValider = () => {
                                     variant="filled"
                                     size={"sm"}
                                     className="font-medium bg-green-500"
+                                    onClick={() => handleConfirm(pro.id)}
                                 >
                                     Confirmé
                                 </Button>
@@ -113,6 +136,7 @@ export const ListRdvAValider = () => {
                                     variant="filled"
                                     size={"sm"}
                                     className="font-medium bg-red-500"
+                                    onClick={() => handleCancel(pro.id)}
                                 >
                                     Annuler
                                 </Button>
