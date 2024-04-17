@@ -27,6 +27,7 @@ def connect():
     )
 
 
+
 def initialize_db_rendez_vous():
     conn = connect()
     cursor = conn.cursor()
@@ -909,6 +910,26 @@ def findRdvByIdWithName(userId: int):
         formatedRdv.append(
             {"nom": r[0] + " " + r[1], "personne": r[2], "personne_pro_id": r[3], 'date': r[4], 'heure_debut': r[5],
              'heure_fin': r[6], 'message': r[7], 'etat': r[8]}
+        )
+
+    return formatedRdv
+
+ 
+ #listes des rendez vous
+def findAllRDV():
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT personne.nom, personne.prenom, date ,heure_debut ,heure_fin FROM rendez_vous INNER JOIN personne on personne.id = personne_id"
+    )
+    rdv = cursor.fetchall()
+    conn.close()
+
+    formatedRdv = []
+    for r in rdv:
+        formatedRdv.append(
+            {"nom": r[0] + " " + r[1],  'date': r[2], 'heure_debut': r[3],
+             'heure_fin': r[4]}
         )
 
     return formatedRdv
