@@ -1,6 +1,7 @@
 import {ProfilListe} from "../Composants/ProfilListe"
 
-export const BackOffice = () => {
+export const BackOfficeProfil = () => {
+
     return (
         <>
             <ProfilListe></ProfilListe>

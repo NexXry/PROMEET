@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 import mysql.connector
 from dotenv import load_dotenv
 import os
@@ -7,6 +8,7 @@ from src.utils import get_hashed_password
 import psycopg2
 from psycopg2 import sql
 from psycopg2.extras import DictCursor
+from src.model import Rdv
 
 load_dotenv()
 
@@ -23,6 +25,27 @@ def connect():
         password=MYSQL_PASSWORD,
         database=MYSQL_DB
     )
+
+
+def initialize_db_rendez_vous():
+    conn = connect()
+    cursor = conn.cursor()
+    query = """
+       CREATE TABLE IF NOT EXISTS rendez_vous (
+           id INT AUTO_INCREMENT PRIMARY KEY,
+           personne_id INT,
+           personne_pro_id INT,
+           date DATE,
+           heure_debut TIME,
+           heure_fin TIME,
+           etat  varchar(50) DEFAULT 'en attente',
+           message VARCHAR(500),
+           FOREIGN KEY (personne_id) REFERENCES personne(id),
+           FOREIGN KEY (personne_pro_id) REFERENCES personne(id)
+       );
+    """
+    cursor.execute(query, multi=True)
+    conn.close()
 
 
 def initialize_db_profession():
@@ -530,6 +553,7 @@ def initialize_db():
     initialize_db_profession()
     initialize_db_entreprise()
     initialize_db_personne()
+    initialize_db_rendez_vous()
     initialize_value_domaine()
     initialize_value_sous_domaine()
     initialize_value_competence()
@@ -828,3 +852,104 @@ def delUserById(userId: int):
     conn.commit()
     conn.close()
     return True
+
+
+def createRdv(rdv: Rdv):
+    try:
+        conn = connect()
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT * FROM rendez_vous  WHERE personne_pro_id = %s AND date = %s AND heure_debut = %s",
+                       (rdv.personne_pro_id, rdv.date, rdv.heure_debut))
+        result = cursor.fetchone()
+        if result is None:
+            cursor.execute(f"""INSERT INTO rendez_vous (personne_id, personne_pro_id, date, heure_debut, heure_fin
+            , etat, message)  VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+                           (rdv.personne_id, rdv.personne_pro_id, rdv.date, rdv.heure_debut, rdv.heure_fin, rdv.etat,
+                            rdv.message))
+            conn.commit()
+            conn.close()
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(f"Error in createRdv: {e}")
+        return False
+
+
+def findRdvById(userId: int):
+    try:
+        conn = connect()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT personne_id AS personne, personne_pro_id as pro_id, date ,heure_debut ,heure_fin ,message, etat FROM rendez_vous where personne_pro_id = %s or personne_id = %s",
+            (userId, userId))
+        rdv = cursor.fetchall()
+        conn.close()
+
+        formatedRdv = []
+        for r in rdv:
+            formatedRdv.append(
+                {"personne": r[0], "personne_pro_id": r[1], 'date': r[2], 'heure_debut': r[3],
+                 'heure_fin': r[4], 'message': r[5], 'etat': r[6]}
+            )
+
+        return formatedRdv
+    except Exception as e:
+        print(f"Error in findRdvById: {e}")
+        return None
+
+
+def findRdvByIdWithName(userId: int):
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT rendez_vous.id,personne.nom, personne.prenom ,personne_id AS personne, personne_pro_id as pro_id, date ,heure_debut ,heure_fin ,message, etat FROM rendez_vous INNER JOIN personne on personne.id = personne_pro_id where personne_pro_id = %s or personne_id = %s",
+        (userId, userId))
+    rdv = cursor.fetchall()
+    conn.close()
+
+    formatedRdv = []
+    for r in rdv:
+        formatedRdv.append(
+            {"id": r[0], "nom": r[1] + " " + r[2], "personne": r[3], "personne_pro_id": r[4], 'date': r[5], 'heure_debut': r[6],
+             'heure_fin': r[7], 'message': r[8], 'etat': r[9]}
+        )
+
+    return formatedRdv
+
+def findRdvForId(rdvId):
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT personne_id AS personne, personne_pro_id as personne_pro FROM rendez_vous where id = %s",
+        (rdvId,))
+    rdv = cursor.fetchone()
+    conn.close()
+
+    formatedRdv = {"personne": rdv[0], "personne_pro": rdv[1]}
+
+    return formatedRdv
+
+def DelRdvById(rdvId: int):
+    try:
+        conn = connect()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM rendez_vous WHERE id = %s", (rdvId,))
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"Error in DelRdvById: {e}")
+        return False
+
+def UpdateRdv(rdvId):
+    try:
+        conn = connect()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE rendez_vous SET etat = 'accepté' WHERE id = %s", (rdvId,))
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"Error in UpdateRdv: {e}")
+        return False
