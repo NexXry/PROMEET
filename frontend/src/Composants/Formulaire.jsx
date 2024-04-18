@@ -6,7 +6,8 @@ import {
     Button,
     Typography, Textarea,
 } from "@material-tailwind/react";
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function Formulaire() {
     const [formData, setFormData] = useState({
@@ -24,7 +25,8 @@ export function Formulaire() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
+        toast.success('Message envoyé avec succès', { position: "top-right" });
         try {
             const response = await axios.post('http://localhost:8000/send_email', 
              formData
@@ -51,7 +53,7 @@ export function Formulaire() {
                                     size="lg"
                                     className="border-t-blueGray-300 focus:border-t-blueGray-500"
                                     label="Nom"
-                                />
+                                required/>
                             </div>
                             <div>
                                 <Typography variant="h6" className="text-bleuFonce mb-3">Prénom</Typography>
@@ -59,7 +61,7 @@ export function Formulaire() {
                                     size="lg"
                                     className="!border-t-blueGray-300 focus:!border-t-blueGray-500"
                                     label="Prénom"
-                                />
+                                required/>
                             </div>
                             <div>
                                 <Typography variant="h6" className="text-bleuFonce mb-3">Email</Typography>
@@ -67,7 +69,7 @@ export function Formulaire() {
                                     size="lg"
                                     className="!border-t-blueGray-300 focus:!border-t-blueGray-500"
                                     label="Email"
-                                />
+                                required/>
                             </div>
                             <div>
                                 <Typography variant="h6" className="text-bleuFonce mb-3">Téléphone portable</Typography>
@@ -75,7 +77,7 @@ export function Formulaire() {
                                     size="lg"
                                     className="!border-t-blueGray-300 focus:!border-t-blueGray-500"
                                     label="Téléphone portable"
-                                />
+                                required/>
                             </div>
                         </div>
                         <div className="mb-4">
@@ -83,7 +85,7 @@ export function Formulaire() {
                             <Textarea label="Votre message"
                                       className="px-3 py-2 border border-blue-gray-300 bg-nuanceBlanc rounded w-full"
                                       rows={4}
-                            />
+                            required/>
                         </div>
                         <Button
                             type="submit"
