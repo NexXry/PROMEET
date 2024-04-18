@@ -3,8 +3,7 @@ from fastapi import FastAPI
 from starlette import status
 from database import connect, initialize_db, retourner_domaines, findUserById, findUserByEmail, createUser, \
     updateUserById, findAllDomaines, findAllSousDomaines, findAllCompetences, findAllProfessions, findAllEntreprises, \
-    recherche_dans_la_base, delUserById, createRdv, findRdvById, findRdvByIdWithName,findAllRDV
-
+    recherche_dans_la_base, delUserById, createRdv, findRdvById, findRdvByIdWithName,DelRdvById,UpdateRdv,findRdvForId
 from src.auth_bearer import JWTBearer
 from src.model.Token import TokenSchema, auth, TokenData
 from src.model.User import User, UpdateUser
@@ -225,7 +224,43 @@ async def get_rendez_vous(token: TokenData = Depends(JWTBearer())):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="You are not authorized to perform this action"
         )
-    
+
 
     result = findAllRDV()
     return {'data': result}
+
+@app.delete('/delete-rdv/{rdvId}')
+async def delete_rdv(rdvId: int, token: TokenData = Depends(JWTBearer())):
+    extracted_token = deserialize_token(token)
+    id = extracted_token['sub'].split(',')[0]
+    rdv = findRdvForId(rdvId)
+    if rdv is None:
+        raise HTTPException(status_code=404, detail="Rendez-vous not found")
+    if str(id) != str(rdv['personne']) and str(id) != str(rdv['personne_pro']):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You are not authorized to perform this action"
+        )
+    res = DelRdvById(rdvId)
+    if res is False:
+        raise HTTPException(status_code=401, detail="Unable to delete rendez-vous")
+
+    return {"message": "Rendez-vous deleted successfully"}
+
+@app.post('/valider-rdv/{rdvId}')
+async def valider_rdv(rdvId: int, token: TokenData = Depends(JWTBearer())):
+    extracted_token = deserialize_token(token)
+    id = extracted_token['sub'].split(',')[0]
+    rdv = findRdvForId(rdvId)
+    if rdv is None:
+        raise HTTPException(status_code=404, detail="Rendez-vous not found")
+    if str(id) != str(rdv['personne_pro']):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You are not authorized to perform this action"
+        )
+    res = UpdateRdv(rdvId)
+    if res is False:
+        raise HTTPException(status_code=401, detail="Unable to validate rendez-vous")
+
+    return {"message": "Rendez-vous validated successfully"}
