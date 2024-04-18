@@ -32,7 +32,7 @@ export const CardProfile = ({profil}) => {
                     {profil.prenom + " " + profil.nom}{/*on affiche les infos de chaque objet*/}
                 </Typography>
 
-                {profil.domaine && profil.sous_domaine ? profil.domaine + " - " + profil.sous_domaine + " - " : ""}
+                {profil.domaine && profil.sous_domaine ? profil.domaine + " - " + profil.sous_domaine : ""}
                 <div className="flex flex-wrap items-end gap-2 my-2">
                     {profil?.competences ? displayCompetence() : <></>}
                 </div>
