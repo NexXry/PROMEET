@@ -173,21 +173,21 @@ def initialize_value_domaine():
     ) LIMIT 1;
 
     INSERT INTO domaine (nom)
-    SELECT * FROM (SELECT 'Medecine & Santé') AS tmp
+    SELECT * FROM (SELECT 'Medecine | Santé') AS tmp
     WHERE NOT EXISTS (
        SELECT nom FROM domaine WHERE nom = 'Medecine & Santé'
     ) LIMIT 1;
 
     INSERT INTO domaine (nom)
-    SELECT * FROM (SELECT 'Education & Enseignement') AS tmp
+    SELECT * FROM (SELECT 'Education | Enseignement') AS tmp
     WHERE NOT EXISTS (
      SELECT nom FROM domaine WHERE nom = 'Education & Enseignement'
     ) LIMIT 1;
 
     INSERT INTO domaine (nom)
-    SELECT * FROM (SELECT 'Art & Design') AS tmp
+    SELECT * FROM (SELECT 'Art | Design') AS tmp
     WHERE NOT EXISTS (
-    SELECT nom FROM domaine WHERE nom = 'Art & Design'
+    SELECT nom FROM domaine WHERE nom = 'Art - Design'
     ) LIMIT 1;
 
     INSERT INTO domaine (nom)
@@ -529,7 +529,8 @@ def initialize_value_personne():
         ("Dubois", "Luc", "luc.dubois@example.com", "nico", "0678236489", "sqdqsds", 3, 2, 1),
         ("Bertrand", "Claire", "claire.bertrand@example.com", "nico", "0678236491", "sqdqsds", 8, 3, 1),
         ("Roux", "Thomas", "thomas.roux3@example.com", "nico", "0678236493", "sqdqsds", 4, 4, 2),
-        ("Moreau", "Charlotte", "charlotte.moreau@example.com", "nico", "0678236495", "sqdqsds", 2, 5, 2)
+        ("Moreau", "Charlotte", "charlotte.moreau@example.com", "nico", "0678236495", "sqdqsds", 2, 5, 2),
+        ("Moreau", "Antoine", "antoine.moreau@example.com", "nico", "0678236495", "sqdqsds", 2, 15, 2)
     ]
 
     requete_insertion = """
