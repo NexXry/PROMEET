@@ -918,6 +918,25 @@ def findRdvByIdWithName(userId: int):
 
     return formatedRdv
 
+
+ #listes des rendez vous
+def findAllRDV():
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT pro.nom, pro.prenom, personne.nom, personne.prenom, date ,heure_debut ,heure_fin,etat FROM rendez_vous INNER JOIN personne as pro on pro.id = personne_pro_id INNER JOIN personne on personne.id = personne_id"
+    )
+    rdv = cursor.fetchall()
+    conn.close()
+
+    formatedRdv = []
+    for r in rdv:
+        formatedRdv.append(
+            {"nom_pro": r[0] + " " + r[1],"nom_demandeur" : r[2] + " " + r[3] ,  'date': r[4], 'heure_debut': r[5],
+             'heure_fin': r[6], 'etat': r[7]}
+        )
+
+    return formatedRdv
 def findRdvForId(rdvId):
     conn = connect()
     cursor = conn.cursor()
