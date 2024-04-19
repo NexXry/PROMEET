@@ -28,7 +28,6 @@ const SearchBar = ({search, profilesRetrieved}) => {
         if (search) {
             axios.get('http://localhost:8000/recherche?q=' + event.target.query.value).then((response) => {//ajout de la valeur du parametre query.value
                 setQuery(response.data.find) //setQuery initialise la variable query par la réponse de l'api
-                console.log(response.data.find)
                 profilesRetrieved(response.data.find); //fonction prop pour lui passer la réponse de l'api
 
             }).catch(() => {
