@@ -47,7 +47,6 @@ export const ListRdvAValider = ({updated, setUpdated}) => {
     }
 
     function handleConfirm(id) {
-        console.log(auth.token)
         axios.post('http://localhost:8000/valider-rdv/' + id, {}, {headers: {Authorization: 'Bearer ' + auth.token}}).then(() => {
             setTablesRows([...tablesRows.filter((rdv) => rdv.id !== id)]);
             toast('Rendez-vous confirmé avec succès', {type: 'success'})

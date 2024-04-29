@@ -18,7 +18,7 @@ const SearchBar = ({search, profilesRetrieved}) => {
                 setFiltres(domaines);
             })
             .catch(error => {
-                console.error('Error fetching domaines:', error);
+                toast.error('Erreur lors de la récupération des domaines');
             });
     }, []);
 
@@ -28,9 +28,10 @@ const SearchBar = ({search, profilesRetrieved}) => {
         if (search) {
             axios.get('http://localhost:8000/recherche?q=' + event.target.query.value).then((response) => {//ajout de la valeur du parametre query.value
                 setQuery(response.data.find) //setQuery initialise la variable query par la réponse de l'api
-                console.log(response.data.find)
                 profilesRetrieved(response.data.find); //fonction prop pour lui passer la réponse de l'api
-
+                if (response.data.find.length === 0) {
+                    toast.warning('Aucun résultat trouvé');
+                }
             }).catch(() => {
                 toast.error('Erreur lors de la recherche');
             });
