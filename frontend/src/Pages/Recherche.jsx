@@ -18,7 +18,7 @@ export function Recherche() {
                 .then(response => {
                     setProfiles(response.data.find);
                 })
-                .catch(error => {
+                .catch(() => {
                     console.error('Error fetching data:', error);
                 });
         }
