@@ -924,7 +924,7 @@ def findAllRDV():
     conn = connect()
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT pro.nom, pro.prenom, personne.nom, personne.prenom, date ,heure_debut ,heure_fin,etat FROM rendez_vous INNER JOIN personne as pro on pro.id = personne_pro_id INNER JOIN personne on personne.id = personne_id"
+        "SELECT pro.nom, pro.prenom, personne.nom, personne.prenom, date ,heure_debut ,heure_fin,etat FROM rendez_vous INNER JOIN personne as pro on pro.id = personne_pro_id INNER JOIN personne on personne.id = personne_id ORDER BY date"
     )
     rdv = cursor.fetchall()
     conn.close()
