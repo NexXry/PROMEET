@@ -6,7 +6,6 @@ import {
 } from "@material-tailwind/react";
 import axios from 'axios';
 import {useLocation} from "react-router-dom";
-import {toast} from "react-toastify";
 
 export function Recherche() {
     const [profiles, setProfiles] = useState([]);
@@ -20,7 +19,7 @@ export function Recherche() {
                     setProfiles(response.data.find);
                 })
                 .catch(() => {
-                    console.error('Error fetching data:', error);
+                    console.error('Error fetching data:');
                 });
         }
     }, [query]);
