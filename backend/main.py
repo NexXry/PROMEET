@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from starlette import status
 from database import connect, initialize_db, retourner_domaines, findUserById, findUserByEmail, createUser, \
     updateUserById, findAllDomaines, findAllSousDomaines, findAllCompetences, findAllProfessions, findAllEntreprises, \
-    recherche_dans_la_base, delUserById, createRdv, findRdvById, findRdvByIdWithName,DelRdvById,UpdateRdv,findRdvForId
+    recherche_dans_la_base, delUserById, createRdv, findRdvById, findRdvByIdWithName,DelRdvById,UpdateRdv,findRdvForId,findAllRDV
 from src.auth_bearer import JWTBearer
 from src.model.Token import TokenSchema, auth, TokenData
 from src.model.User import User, UpdateUser
@@ -211,6 +211,22 @@ async def get_rendez_vous(token: TokenData = Depends(JWTBearer())):
         raise HTTPException(status_code=404, detail="User not found")
 
     result = findRdvByIdWithName(id)
+    return {'data': result}
+
+#liste des RDV
+
+@app.get('/liste-rendez-vous')
+async def get_rendez_vous(token: TokenData = Depends(JWTBearer())):
+    extracted_token = deserialize_token(token)
+    role = extracted_token['sub'].split(',')[2]
+    if role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You are not authorized to perform this action"
+        )
+
+
+    result = findAllRDV()
     return {'data': result}
 
 @app.delete('/delete-rdv/{rdvId}')

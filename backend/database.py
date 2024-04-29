@@ -173,21 +173,21 @@ def initialize_value_domaine():
     ) LIMIT 1;
 
     INSERT INTO domaine (nom)
-    SELECT * FROM (SELECT 'Medecine & Santé') AS tmp
+    SELECT * FROM (SELECT 'Medecine | Santé') AS tmp
     WHERE NOT EXISTS (
-       SELECT nom FROM domaine WHERE nom = 'Medecine & Santé'
+       SELECT nom FROM domaine WHERE nom = 'Medecine | Santé'
     ) LIMIT 1;
 
     INSERT INTO domaine (nom)
-    SELECT * FROM (SELECT 'Education & Enseignement') AS tmp
+    SELECT * FROM (SELECT 'Education | Enseignement') AS tmp
     WHERE NOT EXISTS (
-     SELECT nom FROM domaine WHERE nom = 'Education & Enseignement'
+     SELECT nom FROM domaine WHERE nom = 'Education | Enseignement'
     ) LIMIT 1;
 
     INSERT INTO domaine (nom)
-    SELECT * FROM (SELECT 'Art & Design') AS tmp
+    SELECT * FROM (SELECT 'Art | Design') AS tmp
     WHERE NOT EXISTS (
-    SELECT nom FROM domaine WHERE nom = 'Art & Design'
+    SELECT nom FROM domaine WHERE nom = 'Art | Design'
     ) LIMIT 1;
 
     INSERT INTO domaine (nom)
@@ -529,7 +529,8 @@ def initialize_value_personne():
         ("Dubois", "Luc", "luc.dubois@example.com", "nico", "0678236489", "sqdqsds", 3, 2, 1),
         ("Bertrand", "Claire", "claire.bertrand@example.com", "nico", "0678236491", "sqdqsds", 8, 3, 1),
         ("Roux", "Thomas", "thomas.roux3@example.com", "nico", "0678236493", "sqdqsds", 4, 4, 2),
-        ("Moreau", "Charlotte", "charlotte.moreau@example.com", "nico", "0678236495", "sqdqsds", 2, 5, 2)
+        ("Moreau", "Charlotte", "charlotte.moreau@example.com", "nico", "0678236495", "sqdqsds", 2, 5, 2),
+        ("Moreau", "Antoine", "antoine.moreau@example.com", "nico", "0678236495", "sqdqsds", 2, 15, 2)
     ]
 
     requete_insertion = """
@@ -917,6 +918,25 @@ def findRdvByIdWithName(userId: int):
 
     return formatedRdv
 
+
+ #listes des rendez vous
+def findAllRDV():
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT pro.nom, pro.prenom, personne.nom, personne.prenom, date ,heure_debut ,heure_fin,etat FROM rendez_vous INNER JOIN personne as pro on pro.id = personne_pro_id INNER JOIN personne on personne.id = personne_id"
+    )
+    rdv = cursor.fetchall()
+    conn.close()
+
+    formatedRdv = []
+    for r in rdv:
+        formatedRdv.append(
+            {"nom_pro": r[0] + " " + r[1],"nom_demandeur" : r[2] + " " + r[3] ,  'date': r[4], 'heure_debut': r[5],
+             'heure_fin': r[6], 'etat': r[7]}
+        )
+
+    return formatedRdv
 def findRdvForId(rdvId):
     conn = connect()
     cursor = conn.cursor()

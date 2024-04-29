@@ -6,7 +6,8 @@ import {
     Button,
     Typography, Textarea,
 } from "@material-tailwind/react";
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function Formulaire() {
     const [formData, setFormData] = useState({
@@ -17,22 +18,21 @@ export function Formulaire() {
         message: ''
     });
 
-    //mettre à jour l'état des données 
+    //mettre à jour l'état des données
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         try {
-            const response = await axios.post('http://localhost:8000/send_email', 
+            await axios.post('http://localhost:8000/send_email',
              formData
             );
-            const data = await response.json();
-            console.log(data);
+            toast.success('Message envoyé avec succès', { position: "top-right" });
         } catch (error) {
-            console.error('Erreur lors de la soumission du formulaire:', error);
+            toast.error("Erreur lors de l'envoi du message", { position: "top-right" });
         }
     };  
     return (
@@ -51,7 +51,9 @@ export function Formulaire() {
                                     size="lg"
                                     className="border-t-blueGray-300 focus:border-t-blueGray-500"
                                     label="Nom"
-                                />
+                                    name={"lastname"}
+                                    onChange={handleChange}
+                                required/>
                             </div>
                             <div>
                                 <Typography variant="h6" className="text-bleuFonce mb-3">Prénom</Typography>
@@ -59,7 +61,9 @@ export function Formulaire() {
                                     size="lg"
                                     className="!border-t-blueGray-300 focus:!border-t-blueGray-500"
                                     label="Prénom"
-                                />
+                                    name={"firstname"}
+                                    onChange={handleChange}
+                                required/>
                             </div>
                             <div>
                                 <Typography variant="h6" className="text-bleuFonce mb-3">Email</Typography>
@@ -67,7 +71,9 @@ export function Formulaire() {
                                     size="lg"
                                     className="!border-t-blueGray-300 focus:!border-t-blueGray-500"
                                     label="Email"
-                                />
+                                    name={"email"}
+                                    onChange={handleChange}
+                                required/>
                             </div>
                             <div>
                                 <Typography variant="h6" className="text-bleuFonce mb-3">Téléphone portable</Typography>
@@ -75,15 +81,19 @@ export function Formulaire() {
                                     size="lg"
                                     className="!border-t-blueGray-300 focus:!border-t-blueGray-500"
                                     label="Téléphone portable"
-                                />
+                                    name={"phoneNumber"}
+                                    onChange={handleChange}
+                                required/>
                             </div>
                         </div>
                         <div className="mb-4">
                             <Typography variant="h6" className="text-bleuFonce mb-3">Votre message</Typography>
                             <Textarea label="Votre message"
+                                        name={"message"}
+                                        onChange={handleChange}
                                       className="px-3 py-2 border border-blue-gray-300 bg-nuanceBlanc rounded w-full"
                                       rows={4}
-                            />
+                            required/>
                         </div>
                         <Button
                             type="submit"
