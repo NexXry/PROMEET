@@ -25,7 +25,7 @@ export function Recherche() {
     }, [query]);
 
     return (
-        <div>
+        <div className={"my-20"}>
             <Typography variant="h2" className="mb-8 text-bleuFonce">
                 Recherche
             </Typography>
@@ -34,6 +34,7 @@ export function Recherche() {
                 {profiles.map((item, index) => (
                     <CardProfile key={index} profil={item}/>
                 ))}
+                {profiles.length === 0 && !query && <Typography className={"border-2 border-bleuFonce text-bleuFonce py-4 px-20 rounded-2xl my-14"}>Faites une recherche</Typography>}
             </div>
         </div>
     );
