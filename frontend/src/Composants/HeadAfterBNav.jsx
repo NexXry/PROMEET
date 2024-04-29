@@ -21,11 +21,7 @@ export function HeadAfterBNav() {
 
                             </h1>
                             <p className="mt-4 text-gray-700 break-words w-11/12 md:w-10/12">
-                                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores repellat perspiciatis
-                                aspernatur
-                                quis voluptatum porro incidunt,
-                                libero sequi quos eos velit
-                                jkdhjdhjhdjhfdjkfhsdkjfhskdfhskdjdjfhksdfhsjdfhksdfhksdfhsdkfhsdkfhskfhskdjf
+                                ProMeet : Connectez-vous avec des experts qualifiés dans divers domaines pour répondre à vos besoins de conseil et d'expertise professionnelle.
                             </p>
                         </div>
                         <Link to={'/recherche'}>
