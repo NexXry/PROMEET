@@ -1,11 +1,12 @@
 import SearchBar from '../Composants/SearchBar.jsx';
 import CardProfile from '../Composants/CardProfile.jsx';
-import React, {useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import {
     Typography
 } from "@material-tailwind/react";
 import axios from 'axios';
 import {useLocation} from "react-router-dom";
+import {toast} from "react-toastify";
 
 export function Recherche() {
     const [profiles, setProfiles] = useState([]);
@@ -18,7 +19,7 @@ export function Recherche() {
                 .then(response => {
                     setProfiles(response.data.find);
                 })
-                .catch(error => {
+                .catch(() => {
                     console.error('Error fetching data:', error);
                 });
         }
@@ -30,7 +31,7 @@ export function Recherche() {
                 Recherche
             </Typography>
             <SearchBar search={true} profilesRetrieved={setProfiles}/>
-            <div className="flex flex-wrap justify-center mt-10">
+            <div className="flex flex-wrap justify-center gap-4 mt-10">
                 {profiles.map((item, index) => (
                     <CardProfile key={index} profil={item}/>
                 ))}
