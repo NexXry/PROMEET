@@ -19,8 +19,8 @@ export function Recherche() {
                 .then(response => {
                     setProfiles(response.data.find);
                 })
-                .catch(error => {
-                    toast.error('Erreur lors de la recherche');
+                .catch(() => {
+                    console.error('Error fetching data:', error);
                 });
         }
     }, [query]);

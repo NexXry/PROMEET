@@ -5,3 +5,4 @@ __pycache__/
 /backend/misc.yml
 /backend/backend.iml
 node_modules
+/myproject_env
